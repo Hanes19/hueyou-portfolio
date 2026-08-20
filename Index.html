@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUE. SYSTEMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d0b;
+    --panel: #101512;
+    --panel-2: #0d1210;
+    --border: #1e2a22;
+    --text: #cfd9d2;
+    --text-dim: #6f7d74;
+    --accent: #3ef598;
+    --accent-dim: #1f8055;
+    --amber: #ffb454;
+    --red: #ff6b5e;
+    --heading: #eef4ef;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; overflow-x: hidden; }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(62, 245, 152, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(62, 245, 152, 0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  a { color: inherit; text-decoration: none; }
+  .hidden { display: none !important; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(10, 13, 11, 0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 15px; letter-spacing: 0.5px; display: flex; align-items: center; gap: 10px; }
+  .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .nav-links { display: flex; gap: 36px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--text-dim); }
+  .nav-links a { transition: color 0.2s; position: relative; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links span { color: var(--accent-dim); margin-right: 4px; }
+
+  /* HERO / CAROUSEL */
+  .hero-carousel { position: relative; z-index: 1; max-width: 1320px; margin: 0 auto; padding: 90px 64px 60px; }
+  .hero-slide-wrap { transition: opacity 0.25s ease; }
+  .hero-slide-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+
+  .carousel-arrow {
+    position: absolute; top: 45%; transform: translateY(-50%);
+    background: var(--panel); border: 1px solid var(--border); color: var(--text);
+    width: 38px; height: 38px; border-radius: 50%; font-size: 18px; cursor: pointer;
+    z-index: 5; display: flex; align-items: center; justify-content: center;
+    transition: border-color .15s, color .15s;
+  }
+  .carousel-arrow:hover { border-color: var(--accent); color: var(--accent); }
+  .carousel-arrow.prev { left: 4px; }
+  .carousel-arrow.next { right: 4px; }
+
+  .carousel-dots { display: flex; gap: 8px; justify-content: center; margin-top: 32px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); border: none; cursor: pointer; padding: 0; transition: background .15s, transform .15s; }
+  .dot.active { background: var(--accent); transform: scale(1.3); }
+
+  .eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+  .eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--accent-dim); }
+
+  h1 { font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: clamp(32px, 3.6vw, 52px); line-height: 1.12; letter-spacing: -0.5px; color: var(--heading); margin-bottom: 24px; }
+  h1 .accent-text { color: var(--accent); }
+
+  .lede { font-size: 17px; line-height: 1.65; color: var(--text-dim); max-width: 480px; margin-bottom: 36px; }
+
+  .hero-ctas { display: flex; gap: 14px; align-items: center; }
+  .btn-primary { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; background: var(--accent); color: #06120a; padding: 13px 22px; border-radius: 3px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--accent); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 22px -6px rgba(62,245,152,0.5); }
+  .btn-secondary { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--text); background: none; padding: 13px 20px; border: 1px solid var(--border); border-radius: 3px; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
+  .btn-secondary:hover { border-color: var(--accent-dim); color: var(--accent); }
+
+  .hero-meta { display: flex; gap: 28px; margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--border); font-family: 'IBM Plex Mono', monospace; }
+  .hero-meta > div { display: flex; flex-direction: column; }
+  .stat-value { font-size: 22px; font-weight: 600; color: var(--heading); }
+  .stat-label { display: block; font-size: 11px; color: var(--text-dim); margin-top: 4px; letter-spacing: 0.5px; }
+
+  /* MOCKUP */
+  .mockup { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; box-shadow: 0 30px 80px -30px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.02); }
+  .mockup-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--panel-2); border-bottom: 1px solid var(--border); }
+  .mockup-dots { display: flex; gap: 6px; }
+  .mockup-dots span { width: 9px; height: 9px; border-radius: 50%; background: #2a352d; }
+  .mockup-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 0.5px; }
+  .mockup-body { padding: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; line-height: 1.9; min-height: 260px; }
+
+  .term-line { display: flex; align-items: center; gap: 10px; opacity: 0; animation: fadeIn 0.4s forwards; }
+  .term-text.prompt { color: var(--accent-dim); }
+  .term-text.ok { color: var(--accent); }
+  .term-text.warn { color: var(--amber); }
+  .term-text.dim { color: var(--text-dim); }
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  .cursor { display: inline-block; width: 7px; height: 14px; background: var(--accent); animation: blink 1s step-end infinite; vertical-align: middle; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .mockup-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border-top: 1px solid var(--border); }
+  .mockup-stats > div { background: var(--panel); padding: 16px 18px; }
+  .stat-val { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600; color: var(--heading); }
+  .mockup-stats .stat-label { font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; }
+  .stat-val.up { color: var(--accent); }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; max-width: 1320px; margin: 0 auto; padding: 60px 48px 90px; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 48px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+  .section-label { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; }
+  .section-title { font-family: 'IBM Plex Mono', monospace; font-size: 28px; font-weight: 600; color: var(--heading); margin-top: 8px; }
+  .section-count { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--text-dim); }
+
+  .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .project-card { position: relative; background: var(--bg); padding: 32px; transition: background 0.2s; }
+  .project-card:hover { background: var(--panel); }
+  .project-status { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+  .project-status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .project-card h3 { font-size: 19px; font-weight: 600; color: var(--heading); margin-bottom: 10px; font-family: 'IBM Plex Sans', sans-serif; }
+  .project-card p { font-size: 14px; color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; }
+  .project-stack { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--text-dim); border: 1px solid var(--border); padding: 3px 8px; border-radius: 3px; }
+  .tag-text { min-width: 8px; }
+  .tag-x { background: none; border: none; color: var(--red); cursor: pointer; font-size: 11px; padding: 0; line-height: 1; }
+  .tag-add { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--accent); background: none; border: 1px dashed var(--border); padding: 3px 8px; border-radius: 3px; cursor: pointer; }
+  .card-remove { position: absolute; top: 10px; right: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--red); background: none; border: 1px solid var(--border); padding: 3px 9px; border-radius: 3px; cursor: pointer; }
+  .card-remove:hover { border-color: var(--red); }
+  .add-card { display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border); background: var(--bg); }
+  .card-add-btn { font-family: 'IBM Plex Mono', monospace; color: var(--accent); background: none; border: none; font-size: 14px; cursor: pointer; }
+
+  .line-x { background: none; border: none; color: var(--red); font-size: 11px; cursor: pointer; }
+  .line-add { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent); background: none; border: 1px dashed var(--border); padding: 3px 10px; border-radius: 3px; cursor: pointer; margin-top: 8px; }
+
+  footer { border-top: 1px solid var(--border); padding: 40px 48px; display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-dim); position: relative; z-index: 1; }
+
+  /* EDIT MODE */
+  body.edit-mode [contenteditable="true"] { outline: 1px dashed var(--accent-dim); outline-offset: 3px; border-radius: 2px; cursor: text; caret-color: var(--accent); color: inherit; -webkit-text-fill-color: currentColor; }
+  body.edit-mode [contenteditable="true"]:hover { outline-color: var(--accent); }
+  body.edit-mode [contenteditable="true"]:focus { outline: 2px solid var(--accent); background: rgba(62,245,152,0.1); }
+
+  /* EDITOR TOOLBAR */
+  #editorToolbar { position: fixed; bottom: 22px; right: 22px; z-index: 100; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; font-family: 'IBM Plex Mono', monospace; }
+  .toolbar-btn { background: var(--panel); border: 1px solid var(--border); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 9px 14px; border-radius: 5px; cursor: pointer; transition: border-color .15s, color .15s; box-shadow: 0 8px 24px -8px rgba(0,0,0,.6); white-space: nowrap; }
+  .toolbar-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .toolbar-btn.accent-btn { background: var(--accent); color: #06120a; border-color: var(--accent); font-weight: 600; }
+  .toolbar-btn.accent-btn:hover { color: #06120a; opacity: 0.9; }
+  #editorControls { display: flex; flex-direction: column; gap: 8px; align-items: stretch; background: var(--panel); border: 1px solid var(--border); padding: 14px; border-radius: 8px; box-shadow: 0 8px 24px -8px rgba(0,0,0,.6); min-width: 180px; }
+  .color-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--text-dim); }
+  .color-row input[type=color] { width: 30px; height: 22px; border: 1px solid var(--border); border-radius: 3px; background: none; cursor: pointer; padding: 0; }
+
+  /* LOGIN MODAL */
+  .login-overlay { position: fixed; inset: 0; background: rgba(6,10,8,0.75); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 200; }
+  .login-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 28px; width: 280px; box-shadow: 0 30px 80px -20px rgba(0,0,0,.7); }
+  .login-title { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; color: var(--heading); margin-bottom: 8px; }
+  .login-note { font-size: 12px; color: var(--text-dim); line-height: 1.5; margin-bottom: 16px; }
+  #loginPassword { width: 100%; background: var(--panel-2); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 4px; font-size: 13px; margin-bottom: 14px; font-family: 'IBM Plex Mono', monospace; }
+  .login-actions { display: flex; gap: 8px; }
+  .login-actions button { flex: 1; }
+  .login-error { color: var(--red); font-size: 12px; margin-top: 10px; }
+
+  @media (max-width: 900px) {
+    .hero-slide-inner { grid-template-columns: 1fr; }
+    .hero-carousel { padding: 50px 24px 40px; }
+    .carousel-arrow { display: none; }
+    .projects-grid { grid-template-columns: 1fr; }
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    section { padding: 40px 20px 60px; }
+    #editorToolbar { right: 12px; bottom: 12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span class="logo-dot"></span><span id="cLogo"></span></div>
+  <div class="nav-links" id="cNavLinks"></div>
+</nav>
+
+<div class="hero-carousel" id="heroCarousel">
+  <button class="carousel-arrow prev" id="prevBtn" aria-label="Previous slide">‹</button>
+  <button class="carousel-arrow next" id="nextBtn" aria-label="Next slide">›</button>
+  <div class="hero-slide-wrap" id="heroSlideWrap"></div>
+  <div class="carousel-dots" id="carouselDots"></div>
+</div>
+
+<section id="work">
+  <div class="section-head">
+    <div>
+      <div class="section-label" id="cSectionLabel"></div>
+      <div class="section-title" id="cSectionTitle"></div>
+    </div>
+    <div class="section-count" id="cSectionCount"></div>
+  </div>
+  <div class="projects-grid" id="cProjects"></div>
+</section>
+
+<footer id="contact">
+  <div id="cFooterLeft"></div>
+  <div id="cFooterRight"></div>
+</footer>
+
+<div id="editorToolbar">
+  <div id="editorControls" class="hidden">
+    <button class="toolbar-btn" id="addProjectBtn">+ System</button>
+    <button class="toolbar-btn" id="addSlideBtn">+ Slide</button>
+    <button class="toolbar-btn" id="removeSlideBtn">- Slide</button>
+    <div class="color-row"><span>Accent</span><input type="color" id="accentPicker"></div>
+    <div class="color-row"><span>Background</span><input type="color" id="bgPicker"></div>
+    <button class="toolbar-btn accent-btn" id="exportBtn">Export site</button>
+  </div>
+  <button class="toolbar-btn" id="editorToggleBtn">Editor</button>
+</div>
+
+<div id="loginOverlay" class="login-overlay hidden">
+  <div class="login-card">
+    <div class="login-title">Editor login</div>
+    <p class="login-note">Client-side lock for your own convenience, not real security. Default password is set in the config below.</p>
+    <input type="password" id="loginPassword" class="mono" placeholder="Password">
+    <div class="login-actions">
+      <button class="btn-primary" id="loginSubmit">Unlock</button>
+      <button class="btn-secondary" id="loginCancel">Cancel</button>
+    </div>
+    <div class="login-error hidden" id="loginError">Incorrect password.</div>
+  </div>
+</div>
+
+<!--
+  EDIT ME - everything on this page lives in the JSON block below.
+  You can either edit this JSON directly, or click "Editor" in the
+  bottom-right corner of the page (password: hue2026) to edit visually
+  in the browser, then click "Export site" to download your changes
+  as a new, still-editable index.html.
+-->
+<script type="application/json" id="configData">
+{
+  "editorPassword": "hue2026",
+  "siteName": "HUE. SYSTEMS",
+  "theme": { "accent": "#3ef598", "bg": "#0a0d0b" },
+  "navLinks": [
+    { "number": "01", "label": "Work", "href": "#work" },
+    { "number": "02", "label": "About", "href": "#about" },
+    { "number": "03", "label": "Contact", "href": "#contact" }
+  ],
+  "heroSlides": [
+    {
+      "eyebrow": "Systems Engineer / Builder",
+      "headline": "I build the parts that keep things {accent}running.{/accent}",
+      "lede": "A portfolio of backend architectures, automation pipelines, and infrastructure tooling, the systems that don't show up in a screenshot of the UI, but run everything behind it.",
+      "ctaPrimary": "View systems ->",
+      "ctaSecondary": "Get in touch",
+      "heroStats": [
+        { "value": "12", "label": "Systems shipped" },
+        { "value": "99.9%", "label": "Uptime avg." },
+        { "value": "6", "label": "Years building" }
+      ],
+      "mockupTitle": "pipeline-monitor . production",
+      "terminalLines": [
+        { "text": "$ system --status", "type": "prompt" },
+        { "text": "  checking services...", "type": "dim" },
+        { "text": "  [ok] ingestion-pipeline    online", "type": "ok" },
+        { "text": "  [ok] order-router          online", "type": "ok" },
+        { "text": "  [ok] deploy-tool           online", "type": "ok" },
+        { "text": "  [warn] cache-warmer        rebuilding", "type": "warn" },
+        { "text": "$ all systems nominal", "type": "prompt" }
+      ],
+      "mockupStats": [
+        { "value": "142ms", "label": "Avg latency", "highlight": true },
+        { "value": "8.2M", "label": "Events / day", "highlight": false },
+        { "value": "0", "label": "Failed jobs", "highlight": true }
+      ]
+    },
+    {
+      "eyebrow": "Featured system",
+      "headline": "Order routing that {accent}never sleeps.{/accent}",
+      "lede": "A real-time dispatch engine that assigns and re-routes delivery orders based on load, distance, and driver availability, rebalancing thousands of times a day.",
+      "ctaPrimary": "See how it works ->",
+      "ctaSecondary": "Get in touch",
+      "heroStats": [
+        { "value": "40K", "label": "Orders / day" },
+        { "value": "80ms", "label": "Avg dispatch time" },
+        { "value": "3", "label": "Regions live" }
+      ],
+      "mockupTitle": "order-router . live",
+      "terminalLines": [
+        { "text": "$ router --watch", "type": "prompt" },
+        { "text": "  driver_47 assigned  order_9931", "type": "ok" },
+        { "text": "  driver_12 assigned  order_9932", "type": "ok" },
+        { "text": "  re-routing order_9928...", "type": "warn" },
+        { "text": "  driver_31 assigned  order_9928", "type": "ok" },
+        { "text": "$ queue clear", "type": "prompt" }
+      ],
+      "mockupStats": [
+        { "value": "40K", "label": "Orders / day", "highlight": true },
+        { "value": "80ms", "label": "Dispatch time", "highlight": true },
+        { "value": "0.2%", "label": "Re-route rate", "highlight": false }
+      ]
+    },
+    {
+      "eyebrow": "Featured system",
+      "headline": "Deploys that go from {accent}40 min to 4.{/accent}",
+      "lede": "An internal CI/CD orchestration layer built to remove the friction between merging code and running it in production, across more than twenty services.",
+      "ctaPrimary": "View the writeup ->",
+      "ctaSecondary": "Get in touch",
+      "heroStats": [
+        { "value": "22", "label": "Services covered" },
+        { "value": "4min", "label": "Avg deploy time" },
+        { "value": "10x", "label": "Faster rollbacks" }
+      ],
+      "mockupTitle": "deploy-tool . main",
+      "terminalLines": [
+        { "text": "$ deploy main --service api", "type": "prompt" },
+        { "text": "  building image...", "type": "dim" },
+        { "text": "  running tests...", "type": "dim" },
+        { "text": "  [ok] tests passed (312)", "type": "ok" },
+        { "text": "  [ok] rolled out to prod", "type": "ok" },
+        { "text": "$ done in 3m 42s", "type": "prompt" }
+      ],
+      "mockupStats": [
+        { "value": "4min", "label": "Avg deploy", "highlight": true },
+        { "value": "312", "label": "Tests run", "highlight": false },
+        { "value": "0", "label": "Failed rollouts", "highlight": true }
+      ]
+    }
+  ],
+  "sectionLabel": "Selected work",
+  "sectionTitle": "Systems in production",
+  "sectionCount": "3 of 12",
+  "projects": [
+    {
+      "status": "Live",
+      "title": "Order Routing Engine",
+      "description": "Real-time dispatch system that assigns and re-routes delivery orders based on load, distance, and driver availability.",
+      "stack": ["Go", "Kafka", "Redis"]
+    },
+    {
+      "status": "Live",
+      "title": "Data Ingestion Pipeline",
+      "description": "Fault-tolerant ETL pipeline processing millions of daily events with automatic schema validation and replay.",
+      "stack": ["Python", "Airflow", "BigQuery"]
+    },
+    {
+      "status": "Live",
+      "title": "Internal Deploy Tool",
+      "description": "CI/CD orchestration layer that cut deployment time from 40 minutes to under 4 across 20+ services.",
+      "stack": ["TypeScript", "Docker", "GitHub Actions"]
+    }
+  ],
+  "footerLeft": "(c) 2026 HUE. SYSTEMS",
+  "footerRight": "Built to run quietly."
+}
+</script>
+
+<script>
+(function () {
+  const CONFIG = JSON.parse(document.getElementById('configData').textContent);
+  let currentSlide = 0;
+  let editMode = false;
+  let autoplayTimer = null;
+
+  const $ = (id) => document.getElementById(id);
+
+  function renderHeadline(str) {
+    return str.replace(/\{accent\}(.*?)\{\/accent\}/g, '<span class="accent-text">$1</span>');
+  }
+  function headlineHtmlToTemplate(html) {
+    return html.replace(/<span class="accent-text">(.*?)<\/span>/g, '{accent}$1{/accent}');
+  }
+
+  function applyTheme() {
+    document.documentElement.style.setProperty('--accent', CONFIG.theme.accent);
+    document.documentElement.style.setProperty('--bg', CONFIG.theme.bg);
+    updateTextContrast();
+  }
+
+  function updateTextContrast() {
+    var hex = CONFIG.theme.bg.replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(function(c){ return c + c; }).join('');
+    var r = parseInt(hex.substr(0, 2), 16), g = parseInt(hex.substr(2, 2), 16), b = parseInt(hex.substr(4, 2), 16);
+    var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    var root = document.documentElement.style;
+    if (luminance > 0.55) {
+      // Light background: switch to dark text/panels
+      root.setProperty('--text', '#1c231f');
+      root.setProperty('--text-dim', '#5a6960');
+      root.setProperty('--heading', '#0c100d');
+      root.setProperty('--panel', '#eef1ee');
+      root.setProperty('--panel-2', '#e2e6e2');
+      root.setProperty('--border', '#c9d1ca');
+    } else {
+      // Dark background: original light text/panels
+      root.setProperty('--text', '#cfd9d2');
+      root.setProperty('--text-dim', '#6f7d74');
+      root.setProperty('--heading', '#eef4ef');
+      root.setProperty('--panel', '#101512');
+      root.setProperty('--panel-2', '#0d1210');
+      root.setProperty('--border', '#1e2a22');
+    }
+  }
+
+  function applyEditableState() {
+    document.querySelectorAll(
+      '[data-field], .tag-text, .stat-value, .stat-label, .stat-val, .term-text, #cLogo, #cFooterLeft, #cFooterRight, .nav-label, #cSectionLabel, #cSectionTitle, #cSectionCount'
+    ).forEach(function(el) { el.contentEditable = editMode; });
+    document.body.classList.toggle('edit-mode', editMode);
+  }
+
+  /* ---------- STATIC (nav / section head / footer) ---------- */
+  function renderStatic() {
+    $('cLogo').textContent = CONFIG.siteName;
+    document.title = CONFIG.siteName;
+
+    var navEl = $('cNavLinks');
+    navEl.innerHTML = '';
+    CONFIG.navLinks.forEach(function(link) {
+      var a = document.createElement('a');
+      a.href = link.href;
+      a.innerHTML = '<span>' + link.number + '</span><span class="nav-label">' + link.label + '</span>';
+      navEl.appendChild(a);
+    });
+
+    $('cSectionLabel').textContent = CONFIG.sectionLabel;
+    $('cSectionTitle').textContent = CONFIG.sectionTitle;
+    $('cSectionCount').textContent = CONFIG.sectionCount;
+    $('cFooterLeft').textContent = CONFIG.footerLeft;
+    $('cFooterRight').textContent = CONFIG.footerRight;
+  }
+
+  function syncGlobalsFromDom() {
+    CONFIG.siteName = $('cLogo').textContent.trim();
+    var labels = document.querySelectorAll('.nav-label');
+    CONFIG.navLinks.forEach(function(link, i) { if (labels[i]) link.label = labels[i].textContent.trim(); });
+    CONFIG.sectionLabel = $('cSectionLabel').textContent.trim();
+    CONFIG.sectionTitle = $('cSectionTitle').textContent.trim();
+    CONFIG.sectionCount = $('cSectionCount').textContent.trim();
+    CONFIG.footerLeft = $('cFooterLeft').textContent.trim();
+    CONFIG.footerRight = $('cFooterRight').textContent.trim();
+  }
+
+  /* ---------- CAROUSEL / HERO SLIDES ---------- */
+  function renderSlide(idx) {
+    var wrap = $('heroSlideWrap');
+    wrap.style.opacity = '0';
+    setTimeout(function() {
+      var s = CONFIG.heroSlides[idx];
+      wrap.innerHTML =
+        '<div class="hero-slide-inner">' +
+          '<div>' +
+            '<div class="eyebrow" data-field="eyebrow">' + s.eyebrow + '</div>' +
+            '<h1 data-field="headline">' + renderHeadline(s.headline) + '</h1>' +
+            '<p class="lede" data-field="lede">' + s.lede + '</p>' +
+            '<div class="hero-ctas">' +
+              '<a href="#work" class="btn-primary" data-field="ctaPrimary">' + s.ctaPrimary + '</a>' +
+              '<a href="#contact" class="btn-secondary" data-field="ctaSecondary">' + s.ctaSecondary + '</a>' +
+            '</div>' +
+            '<div class="hero-meta" id="cHeroStats"></div>' +
+          '</div>' +
+          '<div class="mockup">' +
+            '<div class="mockup-bar">' +
+              '<div class="mockup-dots"><span></span><span></span><span></span></div>' +
+              '<div class="mockup-title" data-field="mockupTitle">' + s.mockupTitle + '</div>' +
+              '<div style="width:40px"></div>' +
+            '</div>' +
+            '<div class="mockup-body" id="termBody"></div>' +
+            '<div class="mockup-stats" id="cMockupStats"></div>' +
+          '</div>' +
+        '</div>';
+
+      var heroStatsEl = $('cHeroStats');
+      s.heroStats.forEach(function(stat) {
+        var div = document.createElement('div');
+        div.innerHTML = '<span class="stat-value">' + stat.value + '</span><span class="stat-label">' + stat.label + '</span>';
+        heroStatsEl.appendChild(div);
+      });
+
+      var mockupStatsEl = $('cMockupStats');
+      s.mockupStats.forEach(function(stat) {
+        var div = document.createElement('div');
+        div.innerHTML = '<div class="stat-val' + (stat.highlight ? ' up' : '') + '">' + stat.value + '</div><div class="stat-label">' + stat.label + '</div>';
+        mockupStatsEl.appendChild(div);
+      });
+
+      var termBody = $('termBody');
+      var delay = 150;
+      s.terminalLines.forEach(function(line, i) {
+        var row = document.createElement('div');
+        row.className = 'term-line';
+        row.style.animationDelay = delay + 'ms';
+        var span = document.createElement('span');
+        span.className = 'term-text ' + line.type;
+        span.dataset.type = line.type;
+        span.textContent = line.text;
+        row.appendChild(span);
+        if (i === s.terminalLines.length - 1) {
+          var cursor = document.createElement('span');
+          cursor.className = 'cursor';
+          row.appendChild(cursor);
+        }
+        if (editMode) {
+          var x = document.createElement('button');
+          x.className = 'line-x';
+          x.textContent = 'x';
+          x.onclick = function() { removeTermLine(i); };
+          row.appendChild(x);
+        }
+        termBody.appendChild(row);
+        delay += 300;
+      });
+      if (editMode) {
+        var addLine = document.createElement('button');
+        addLine.className = 'line-add';
+        addLine.textContent = '+ line';
+        addLine.onclick = addTermLine;
+        termBody.appendChild(addLine);
+      }
+
+      applyEditableState();
+      requestAnimationFrame(function() { wrap.style.opacity = '1'; });
+    }, editMode ? 0 : 150);
+  }
+
+  function syncSlideFromDom(idx) {
+    var s = CONFIG.heroSlides[idx];
+    var wrap = $('heroSlideWrap');
+    if (!wrap.querySelector('[data-field="eyebrow"]')) return;
+    s.eyebrow = wrap.querySelector('[data-field="eyebrow"]').textContent.trim();
+    s.headline = headlineHtmlToTemplate(wrap.querySelector('[data-field="headline"]').innerHTML.trim());
+    s.lede = wrap.querySelector('[data-field="lede"]').textContent.trim();
+    s.ctaPrimary = wrap.querySelector('[data-field="ctaPrimary"]').textContent.trim();
+    s.ctaSecondary = wrap.querySelector('[data-field="ctaSecondary"]').textContent.trim();
+    var heroMetaDivs = wrap.querySelectorAll('.hero-meta > div');
+    heroMetaDivs.forEach(function(div, i) {
+      if (!s.heroStats[i]) return;
+      s.heroStats[i].value = div.querySelector('.stat-value').textContent.trim();
+      s.heroStats[i].label = div.querySelector('.stat-label').textContent.trim();
+    });
+    s.mockupTitle = wrap.querySelector('[data-field="mockupTitle"]').textContent.trim();
+    var termTexts = wrap.querySelectorAll('.term-text');
+    s.terminalLines = Array.prototype.map.call(termTexts, function(t) { return { text: t.textContent, type: t.dataset.type }; });
+    var statDivs = wrap.querySelectorAll('#cMockupStats > div');
+    statDivs.forEach(function(div, i) {
+      if (!s.mockupStats[i]) return;
+      s.mockupStats[i].value = div.querySelector('.stat-val').textContent.trim();
+      s.mockupStats[i].label = div.querySelector('.stat-label').textContent.trim();
+      s.mockupStats[i].highlight = div.querySelector('.stat-val').classList.contains('up');
+    });
+  }
+
+  function renderDots() {
+    var el = $('carouselDots');
+    el.innerHTML = '';
+    CONFIG.heroSlides.forEach(function(_, i) {
+      var d = document.createElement('button');
+      d.className = 'dot' + (i === currentSlide ? ' active' : '');
+      d.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+      d.onclick = function() { goToSlide(i); };
+      el.appendChild(d);
+    });
+    $('removeSlideBtn').style.opacity = CONFIG.heroSlides.length <= 1 ? '0.4' : '1';
+  }
+
+  function goToSlide(idx) {
+    if (editMode) syncSlideFromDom(currentSlide);
+    currentSlide = (idx + CONFIG.heroSlides.length) % CONFIG.heroSlides.length;
+    renderSlide(currentSlide);
+    renderDots();
+    resetAutoplay();
+  }
+
+  function addTermLine() {
+    syncSlideFromDom(currentSlide);
+    CONFIG.heroSlides[currentSlide].terminalLines.push({ text: '$ new line', type: 'dim' });
+    renderSlide(currentSlide);
+  }
+  function removeTermLine(i) {
+    syncSlideFromDom(currentSlide);
+    CONFIG.heroSlides[currentSlide].terminalLines.splice(i, 1);
+    renderSlide(currentSlide);
+  }
+  function addSlide() {
+    syncSlideFromDom(currentSlide);
+    var clone = JSON.parse(JSON.stringify(CONFIG.heroSlides[currentSlide]));
+    clone.headline = 'New headline {accent}here{/accent}';
+    CONFIG.heroSlides.splice(currentSlide + 1, 0, clone);
+    goToSlide(currentSlide + 1);
+  }
+  function removeSlide() {
+    if (CONFIG.heroSlides.length <= 1) return;
+    CONFIG.heroSlides.splice(currentSlide, 1);
+    currentSlide = Math.max(0, currentSlide - 1);
+    renderSlide(currentSlide);
+    renderDots();
+  }
+
+  function startAutoplay() {
+    autoplayTimer = setInterval(function() { if (!editMode) goToSlide(currentSlide + 1); }, 6000);
+  }
+  function resetAutoplay() { clearInterval(autoplayTimer); if (!editMode) startAutoplay(); }
+
+  /* ---------- PROJECTS ---------- */
+  function renderProjects() {
+    var el = $('cProjects');
+    el.innerHTML = '';
+    CONFIG.projects.forEach(function(p, i) {
+      var card = document.createElement('div');
+      card.className = 'project-card';
+      var tagsHtml = p.stack.map(function(t) {
+        return '<span class="tag"><span class="tag-text">' + t + '</span>' +
+          (editMode ? '<button class="tag-x">x</button>' : '') + '</span>';
+      }).join('');
+      card.innerHTML =
+        (editMode ? '<button class="card-remove">x Remove</button>' : '') +
+        '<div class="project-status" data-field="status">' + p.status + '</div>' +
+        '<h3 data-field="title">' + p.title + '</h3>' +
+        '<p data-field="description">' + p.description + '</p>' +
+        '<div class="project-stack">' + tagsHtml + (editMode ? '<button class="tag-add">+ tag</button>' : '') + '</div>';
+      el.appendChild(card);
+
+      if (editMode) {
+        var removeBtn = card.querySelector('.card-remove');
+        if (removeBtn) removeBtn.onclick = function() { removeProject(i); };
+        var tagXs = card.querySelectorAll('.tag-x');
+        tagXs.forEach(function(btn, ti) { btn.onclick = function() { removeTag(i, ti); }; });
+        var tagAdd = card.querySelector('.tag-add');
+        if (tagAdd) tagAdd.onclick = function() { addTag(i); };
+      }
+    });
+    if (editMode) {
+      var addCard = document.createElement('div');
+      addCard.className = 'project-card add-card';
+      addCard.innerHTML = '<button class="card-add-btn">+ Add system</button>';
+      addCard.querySelector('button').onclick = addProject;
+      el.appendChild(addCard);
+    }
+    applyEditableState();
+  }
+
+  function syncProjectsFromDom() {
+    var cards = document.querySelectorAll('#cProjects .project-card:not(.add-card)');
+    CONFIG.projects = Array.prototype.map.call(cards, function(card) {
+      var tags = card.querySelectorAll('.tag-text');
+      return {
+        status: card.querySelector('[data-field="status"]').textContent.trim(),
+        title: card.querySelector('[data-field="title"]').textContent.trim(),
+        description: card.querySelector('[data-field="description"]').textContent.trim(),
+        stack: Array.prototype.map.call(tags, function(t) { return t.textContent.trim(); }).filter(Boolean)
+      };
+    });
+  }
+
+  function addProject() {
+    syncProjectsFromDom();
+    CONFIG.projects.push({ status: 'Live', title: 'New System', description: 'Describe what this system does.', stack: ['Tech'] });
+    renderProjects();
+  }
+  function removeProject(i) {
+    syncProjectsFromDom();
+    CONFIG.projects.splice(i, 1);
+    renderProjects();
+  }
+  function addTag(pIdx) {
+    syncProjectsFromDom();
+    CONFIG.projects[pIdx].stack.push('Tag');
+    renderProjects();
+  }
+  function removeTag(pIdx, tIdx) {
+    syncProjectsFromDom();
+    CONFIG.projects[pIdx].stack.splice(tIdx, 1);
+    renderProjects();
+  }
+
+  /* ---------- EDITOR MODE ---------- */
+  function unlockEditor() {
+    editMode = true;
+    clearInterval(autoplayTimer);
+    $('editorControls').classList.remove('hidden');
+    $('editorToggleBtn').textContent = 'Lock';
+    $('accentPicker').value = CONFIG.theme.accent;
+    $('bgPicker').value = CONFIG.theme.bg;
+    renderStatic();
+    renderProjects();
+    renderSlide(currentSlide);
+    renderDots();
+    applyEditableState();
+  }
+  function lockEditor() {
+    syncSlideFromDom(currentSlide);
+    syncProjectsFromDom();
+    syncGlobalsFromDom();
+    editMode = false;
+    $('editorControls').classList.add('hidden');
+    $('editorToggleBtn').textContent = 'Editor';
+    renderStatic();
+    renderProjects();
+    renderSlide(currentSlide);
+    renderDots();
+    applyEditableState();
+    startAutoplay();
+  }
+
+  function openLogin() {
+    $('loginOverlay').classList.remove('hidden');
+    $('loginError').classList.add('hidden');
+    $('loginPassword').value = '';
+    $('loginPassword').focus();
+  }
+  function closeLogin() { $('loginOverlay').classList.add('hidden'); }
+
+  function downloadHtml() {
+    if (editMode) { syncSlideFromDom(currentSlide); syncProjectsFromDom(); syncGlobalsFromDom(); }
+    var wasEditing = editMode;
+    if (wasEditing) lockEditor();
+    $('configData').textContent = JSON.stringify(CONFIG, null, 2);
+    var htmlStr = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([htmlStr], { type: 'text/html' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'index.html';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  /* ---------- INIT / EVENTS ---------- */
+  applyTheme();
+  renderStatic();
+  renderProjects();
+  renderSlide(currentSlide);
+  renderDots();
+  startAutoplay();
+
+  $('prevBtn').onclick = function() { goToSlide(currentSlide - 1); };
+  $('nextBtn').onclick = function() { goToSlide(currentSlide + 1); };
+  $('heroCarousel').addEventListener('mouseenter', function() { clearInterval(autoplayTimer); });
+  $('heroCarousel').addEventListener('mouseleave', function() { if (!editMode) startAutoplay(); });
+
+  $('editorToggleBtn').onclick = function() { editMode ? lockEditor() : openLogin(); };
+  $('loginCancel').onclick = closeLogin;
+  $('loginOverlay').addEventListener('click', function(e) { if (e.target.id === 'loginOverlay') closeLogin(); });
+  $('loginSubmit').onclick = function() {
+    if ($('loginPassword').value === CONFIG.editorPassword) { closeLogin(); unlockEditor(); }
+    else { $('loginError').classList.remove('hidden'); }
+  };
+  $('loginPassword').addEventListener('keydown', function(e) { if (e.key === 'Enter') $('loginSubmit').click(); });
+
+  $('addProjectBtn').onclick = addProject;
+  $('addSlideBtn').onclick = addSlide;
+  $('removeSlideBtn').onclick = removeSlide;
+  $('exportBtn').onclick = downloadHtml;
+  $('accentPicker').oninput = function(e) { CONFIG.theme.accent = e.target.value; document.documentElement.style.setProperty('--accent', e.target.value); };
+  $('bgPicker').oninput = function(e) { CONFIG.theme.bg = e.target.value; document.documentElement.style.setProperty('--bg', e.target.value); updateTextContrast(); };
+})();
+</script>
+
+</body>
+</html>
