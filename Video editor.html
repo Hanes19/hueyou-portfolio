@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUE. SYSTEMS — Video Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060a11;
+    --bg2: #0a1220;
+    --panel: #0c141f;
+    --panel-2: #0a111a;
+    --border: #1a2436;
+    --text: #b9c4d6;
+    --text-dim: #66738a;
+    --heading: #f3f6fb;
+    --accent: #d42a35;
+    --accent2: #2f6fe0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 900px 600px at 15% 10%, rgba(47,111,224,0.16), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 85% 90%, rgba(212,42,53,0.10), transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  .hidden { display: none !important; }
+  a { color: inherit; text-decoration: none; }
+  .display { font-family: 'Anton', sans-serif; font-weight: 400; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+<style>
+  /* INTRO SCREEN */
+  .intro-screen { min-height: 100vh; position: relative; z-index: 1; display: flex; flex-direction: column; }
+  .intro-topnav { display: flex; align-items: center; padding: 28px 48px; }
+  .intro-logo { width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-size: 15px; color: var(--heading); }
+  .intro-body { flex: 1; display: flex; align-items: center; justify-content: center; gap: 64px; padding: 20px 48px 80px; flex-wrap: wrap; }
+  .intro-photo-wrap { position: relative; width: 220px; height: 220px; flex-shrink: 0; }
+  .intro-photo-disc { position: absolute; left: -30px; top: 10px; width: 200px; height: 200px; border-radius: 50%; background: var(--accent); opacity: 0.9; }
+  .intro-photo { position: relative; width: 200px; height: 260px; border-radius: 6px; overflow: hidden; background: var(--panel); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+  .intro-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .intro-text { text-align: left; }
+  .intro-title-row { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .intro-title { font-size: clamp(48px, 8vw, 88px); color: var(--heading); line-height: 0.95; }
+  .intro-year { font-family: 'IBM Plex Mono', monospace; font-size: 22px; color: var(--text-dim); font-weight: 600; }
+  .intro-role-row { display: flex; align-items: center; gap: 10px; margin: 18px 0 34px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; }
+  .intro-role-box { width: 12px; height: 12px; border: 1px solid var(--text-dim); }
+  .intro-menu { display: flex; flex-direction: column; gap: 14px; }
+  .intro-menu a { font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: 3px; color: var(--text); text-transform: uppercase; width: fit-content; position: relative; padding-bottom: 3px; transition: color .2s; }
+  .intro-menu a:hover { color: var(--accent); }
+  .intro-menu a::after { content: ""; position: absolute; left: 0; bottom: 0; width: 0; height: 1px; background: var(--accent); transition: width .2s; }
+  .intro-menu a:hover::after { width: 100%; }
+  @media (max-width: 700px) {
+    .intro-body { flex-direction: column; text-align: center; gap: 40px; }
+    .intro-text { text-align: center; }
+    .intro-title-row { justify-content: center; }
+    .intro-role-row { justify-content: center; }
+    .intro-menu { align-items: center; }
+    .intro-photo-disc { left: 50%; transform: translateX(-50%); margin-left: -100px; }
+  }
+</style>
+<style>
+  /* PILL NAV */
+  .pill-nav { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 16px 48px; background: rgba(6,10,17,0.85); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+  .pill-nav-logo { font-family: 'Anton', sans-serif; font-size: 14px; color: var(--heading); display: flex; align-items: center; gap: 8px; }
+  .pill-nav-logo .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .pills { display: flex; gap: 10px; }
+  .pill { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); color: var(--text-dim); transition: all .2s; }
+  .pill:hover { border-color: var(--accent2); color: var(--text); }
+  .pill.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+  .back-link { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); border: 1px solid var(--border); padding: 7px 13px; border-radius: 4px; }
+  .back-link:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ABOUT SECTION */
+  .about-section { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 90px 48px; display: grid; grid-template-columns: 340px 1fr; gap: 60px; }
+  .about-photo-wrap { position: relative; }
+  .about-photo { width: 100%; aspect-ratio: 3/4; border-radius: 8px; overflow: hidden; background: var(--panel); border: 1px solid var(--border); position: relative; }
+  .about-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hello-label { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 2px; color: var(--accent2); text-transform: uppercase; margin-bottom: 8px; }
+  .about-name { font-family: 'Anton', sans-serif; font-size: clamp(26px, 3vw, 36px); color: var(--heading); margin-bottom: 28px; }
+  .block-title { font-family: 'Anton', sans-serif; font-size: 18px; color: var(--heading); margin-bottom: 14px; letter-spacing: 0.5px; }
+  .about-bio { font-size: 14.5px; line-height: 1.75; color: var(--text); margin-bottom: 34px; max-width: 640px; }
+  .skills-icons { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 34px; }
+  .skill-badge { width: 42px; height: 42px; border-radius: 8px; background: var(--panel); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; color: var(--heading); position: relative; }
+  .skill-badge .rm { position: absolute; top: -7px; right: -7px; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 10px; line-height: 16px; text-align: center; cursor: pointer; }
+  .skill-add { width: 42px; height: 42px; border-radius: 8px; border: 1px dashed var(--border); color: var(--accent2); background: none; cursor: pointer; font-size: 16px; }
+</style>
+<style>
+  /* EDU / EXP / LANG */
+  .edu-exp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 34px; }
+  .edu-item, .exp-item { position: relative; padding-left: 18px; margin-bottom: 16px; }
+  .edu-item::before, .exp-item::before { content: ""; position: absolute; left: 0; top: 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); }
+  .edu-item .years, .exp-item .title-line { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-dim); }
+  .edu-item .school, .exp-item .detail { font-size: 14px; color: var(--heading); font-weight: 600; margin: 2px 0; }
+  .edu-item .detail2 { font-size: 13px; color: var(--text-dim); }
+  .item-remove { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--accent); background: none; border: 1px solid var(--border); padding: 2px 8px; border-radius: 3px; cursor: pointer; margin-left: 8px; }
+  .item-add { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent2); background: none; border: 1px dashed var(--border); padding: 4px 12px; border-radius: 4px; cursor: pointer; }
+  .lang-rows { display: flex; flex-direction: column; gap: 12px; max-width: 420px; }
+  .lang-row { display: flex; align-items: center; gap: 14px; }
+  .lang-name { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text); width: 90px; flex-shrink: 0; }
+  .lang-bar-track { flex: 1; height: 6px; background: var(--panel); border-radius: 4px; overflow: hidden; }
+  .lang-bar-fill { height: 100%; background: var(--accent2); border-radius: 4px; }
+  .lang-pct { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); width: 36px; text-align: right; }
+
+  /* PROJECTS */
+  .projects-section { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 40px 48px 100px; }
+  .projects-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 36px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+  .projects-title { font-family: 'Anton', sans-serif; font-size: clamp(24px, 3vw, 34px); color: var(--heading); }
+  .projects-year-tag { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; }
+  .projects-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .project-tile { position: relative; aspect-ratio: 1/1.1; border-radius: 8px; overflow: hidden; background: var(--panel); border: 1px solid var(--border); }
+  .project-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .project-tile-title { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #fff; background: linear-gradient(to top, rgba(0,0,0,0.75), transparent); }
+  .project-tile-empty { display: flex; align-items: center; justify-content: center; }
+  .project-tile-remove { position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; border-radius: 50%; background: rgba(6,10,17,0.85); border: 1px solid var(--border); color: var(--accent); font-size: 12px; cursor: pointer; }
+  .project-tile-add { display: flex; align-items: center; justify-content: center; aspect-ratio: 1/1.1; border-radius: 8px; border: 1px dashed var(--border); color: var(--accent2); background: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+  @media (max-width: 900px) { .projects-grid { grid-template-columns: repeat(2, 1fr); } .about-section { grid-template-columns: 1fr; } .edu-exp-grid { grid-template-columns: 1fr; } }
+</style>
+<style>
+  /* CONTACT */
+  .contact-section { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 80px 48px; }
+  .contact-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .contact-photo-wrap { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; }
+  .contact-photo { width: 88px; height: 88px; border-radius: 50%; overflow: hidden; background: var(--panel); border: 2px solid var(--accent2); flex-shrink: 0; }
+  .contact-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .contact-name { font-family: 'Anton', sans-serif; font-size: 17px; color: var(--heading); }
+  .contact-age { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-dim); }
+  .social-list { display: flex; flex-direction: column; gap: 10px; }
+  .social-row { display: flex; align-items: center; gap: 12px; }
+  .social-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .social-platform { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); width: 70px; text-transform: uppercase; }
+  .social-handle { font-size: 13px; color: var(--text); }
+  .thank-you-title { font-family: 'Anton', sans-serif; font-size: clamp(34px, 5vw, 56px); color: var(--heading); line-height: 1.05; text-align: right; }
+  .thank-you-title .accent2-text { color: var(--accent2); }
+  @media (max-width: 800px) { .contact-inner { grid-template-columns: 1fr; text-align: center; } .contact-photo-wrap { justify-content: center; } .social-row { justify-content: center; } .thank-you-title { text-align: center; } }
+
+  /* PHOTO UPLOAD EMPTY STATES */
+  .photo-upload-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%; gap: 8px; }
+  .photo-upload-btn { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent2); background: none; border: 1px dashed var(--border); padding: 8px 14px; border-radius: 5px; cursor: pointer; }
+  .photo-upload-btn:hover { border-color: var(--accent2); }
+  .photo-controls { position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; z-index: 3; }
+  .photo-controls button { font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 4px 9px; border-radius: 3px; cursor: pointer; background: rgba(6,10,17,0.85); border: 1px solid var(--border); color: var(--text); }
+  .photo-controls button:hover { border-color: var(--accent2); color: var(--accent2); }
+  .photo-controls button.danger:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* EDIT MODE */
+  body.edit-mode [contenteditable="true"] { outline: 1px dashed var(--accent2); outline-offset: 3px; border-radius: 2px; cursor: text; caret-color: var(--accent2); color: inherit; }
+  body.edit-mode [contenteditable="true"]:hover { outline-color: var(--accent); }
+  body.edit-mode [contenteditable="true"]:focus { outline: 2px solid var(--accent2); background: rgba(47,111,224,0.08); }
+
+  /* EDITOR TOOLBAR */
+  #editorToolbar { position: fixed; bottom: 22px; right: 22px; z-index: 100; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; font-family: 'IBM Plex Mono', monospace; }
+  .toolbar-btn { background: var(--panel); border: 1px solid var(--border); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 9px 14px; border-radius: 5px; cursor: pointer; transition: border-color .15s, color .15s; box-shadow: 0 8px 24px -8px rgba(0,0,0,.6); white-space: nowrap; }
+  .toolbar-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+  .toolbar-btn.accent-btn { background: var(--accent2); color: #fff; border-color: var(--accent2); font-weight: 600; }
+  .toolbar-btn.accent-btn:hover { opacity: 0.9; color: #fff; }
+  #editorControls { display: flex; flex-direction: column; gap: 8px; align-items: stretch; background: var(--panel); border: 1px solid var(--border); padding: 14px; border-radius: 8px; box-shadow: 0 8px 24px -8px rgba(0,0,0,.6); min-width: 190px; }
+  .color-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--text-dim); }
+  .color-row input[type=color] { width: 30px; height: 22px; border: 1px solid var(--border); border-radius: 3px; background: none; cursor: pointer; padding: 0; }
+
+  /* LOGIN MODAL */
+  .login-overlay { position: fixed; inset: 0; background: rgba(6,10,17,0.8); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 200; }
+  .login-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 28px; width: 280px; box-shadow: 0 30px 80px -20px rgba(0,0,0,.7); }
+  .login-title { font-family: 'Anton', sans-serif; font-size: 16px; color: var(--heading); margin-bottom: 8px; }
+  .login-note { font-size: 12px; color: var(--text-dim); line-height: 1.5; margin-bottom: 16px; }
+  #loginPassword { width: 100%; background: var(--panel-2); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 4px; font-size: 13px; margin-bottom: 14px; font-family: 'IBM Plex Mono', monospace; }
+  .login-actions { display: flex; gap: 8px; }
+  .login-actions button { flex: 1; font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 9px; border-radius: 4px; cursor: pointer; }
+  .btn-primary { background: var(--accent2); color: #fff; border: 1px solid var(--accent2); }
+  .btn-secondary { background: none; color: var(--text); border: 1px solid var(--border); }
+  .login-error { color: var(--accent); font-size: 12px; margin-top: 10px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
+</style>
+<section class="intro-screen">
+  <div class="intro-topnav">
+    <div class="intro-logo mono">YP</div>
+  </div>
+  <div class="intro-body">
+    <div class="intro-photo-wrap">
+      <div class="intro-photo-disc"></div>
+      <div class="intro-photo" id="introPhoto"></div>
+    </div>
+    <div class="intro-text">
+      <div class="intro-title-row">
+        <h1 class="intro-title display" id="introTitle" data-field="title"></h1>
+        <span class="intro-year mono" id="introYear" data-field="year"></span>
+      </div>
+      <div class="intro-role-row">
+        <span class="intro-role-box"></span>
+        <span id="introRole" data-field="role"></span>
+      </div>
+      <div class="intro-menu" id="introMenu"></div>
+    </div>
+  </div>
+</section>
+
+<nav class="pill-nav">
+  <div class="pill-nav-logo"><span class="dot"></span><span id="navLogo"></span></div>
+  <div class="pills">
+    <a href="#about" class="pill">PROFIL</a>
+    <a href="#projects" class="pill">PROJECT</a>
+    <a href="#contact" class="pill">CONTACT</a>
+  </div>
+  <a class="back-link mono" href="index.html">&larr; All portfolios</a>
+</nav>
+
+<section id="about" class="about-section">
+  <div class="about-photo-wrap">
+    <div class="about-photo" id="aboutPhoto"></div>
+  </div>
+  <div>
+    <div class="hello-label" id="aboutGreeting" data-field="greeting"></div>
+    <h2 class="about-name display" id="aboutName" data-field="name"></h2>
+
+    <div class="block-title">About Me</div>
+    <p class="about-bio" id="aboutBio" data-field="bio"></p>
+
+    <div class="block-title">Software Skills</div>
+    <div class="skills-icons" id="skillsIcons"></div>
+
+    <div class="edu-exp-grid">
+      <div>
+        <div class="block-title">Education</div>
+        <div id="educationList"></div>
+      </div>
+      <div>
+        <div class="block-title">Experience</div>
+        <div id="experienceList"></div>
+      </div>
+    </div>
+
+    <div class="block-title">Language</div>
+    <div class="lang-rows" id="languageRows"></div>
+  </div>
+</section>
+
+<section id="projects" class="projects-section">
+  <div class="projects-header">
+    <div class="projects-title display" id="projectsTitle" data-field="title"></div>
+    <div class="projects-year-tag mono" id="projectsYearTag" data-field="yearTag"></div>
+  </div>
+  <div class="projects-grid" id="projectsGrid"></div>
+</section>
+
+<section id="contact" class="contact-section">
+  <div class="contact-inner">
+    <div>
+      <div class="contact-photo-wrap">
+        <div class="contact-photo" id="contactPhoto"></div>
+        <div>
+          <div class="contact-name" id="contactName" data-field="name"></div>
+          <div class="contact-age mono" id="contactAge" data-field="age"></div>
+        </div>
+      </div>
+      <div class="social-list" id="socialList"></div>
+    </div>
+    <div>
+      <div class="thank-you-title display">
+        <div id="thankYouLine1" data-field="thankYouLine1"></div>
+        <div id="thankYouLine2" class="accent2-text" data-field="thankYouLine2"></div>
+      </div>
+    </div>
+  </div>
+</section>
+<div id="editorToolbar">
+  <div id="editorControls" class="hidden">
+    <button class="toolbar-btn" id="addSkillBtn">+ Skill</button>
+    <button class="toolbar-btn" id="addEduBtn">+ Education</button>
+    <button class="toolbar-btn" id="addExpBtn">+ Experience</button>
+    <button class="toolbar-btn" id="addLangBtn">+ Language</button>
+    <button class="toolbar-btn" id="addProjectBtn">+ Project</button>
+    <button class="toolbar-btn" id="addSocialBtn">+ Social</button>
+    <div class="color-row"><span>Accent</span><input type="color" id="accentPicker"></div>
+    <div class="color-row"><span>Accent 2</span><input type="color" id="accent2Picker"></div>
+    <div class="color-row"><span>Background</span><input type="color" id="bgPicker"></div>
+    <button class="toolbar-btn accent-btn" id="saveDbBtn">Save changes</button>
+    <button class="toolbar-btn" id="exportBtn">Download backup</button>
+    <div id="saveStatus" class="mono" style="font-size:11px;color:var(--text-dim);"></div>
+  </div>
+  <button class="toolbar-btn" id="editorToggleBtn">Editor</button>
+</div>
+
+<div id="loginOverlay" class="login-overlay hidden">
+  <div class="login-card">
+    <div class="login-title">Editor login</div>
+    <p class="login-note">Client-side lock for your own convenience, not real security.</p>
+    <input type="password" id="loginPassword" class="mono" placeholder="Password">
+    <div class="login-actions">
+      <button class="btn-primary" id="loginSubmit">Unlock</button>
+      <button class="btn-secondary" id="loginCancel">Cancel</button>
+    </div>
+    <div class="login-error hidden" id="loginError">Incorrect password.</div>
+  </div>
+</div>
+<!--
+  EDIT ME - everything below lives in this JSON block, or edit visually
+  via Editor mode (password: hue2026).
+
+  DATABASE / STORAGE SETUP - same steps as before:
+  1. https://supabase.com -> new project -> SQL editor, run:
+     create table site_content (
+       id text primary key, data jsonb not null, updated_at timestamptz default now()
+     );
+     alter table site_content enable row level security;
+     create policy "public read" on site_content for select using (true);
+     create policy "public write" on site_content for insert with check (true);
+     create policy "public update" on site_content for update using (true);
+  2. Storage -> new bucket named "site-media", set Public, then run:
+     create policy "public read media" on storage.objects for select using (bucket_id = 'site-media');
+     create policy "public upload media" on storage.objects for insert with check (bucket_id = 'site-media');
+     create policy "public update media" on storage.objects for update using (bucket_id = 'site-media');
+     create policy "public delete media" on storage.objects for delete using (bucket_id = 'site-media');
+  3. Paste your Project URL and anon key below, set "enabled": true.
+-->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="application/json" id="configData">
+{
+  "editorPassword": "hue2026",
+  "siteName": "HUE. SYSTEMS",
+  "theme": { "accent": "#d42a35", "accent2": "#2f6fe0", "bg": "#060a11" },
+  "intro": {
+    "title": "PORTFOLIO",
+    "year": "2026",
+    "role": "Content Creator",
+    "photo": null,
+    "menu": [
+      { "label": "START", "href": "#about" },
+      { "label": "OPTIONS", "href": "#projects" },
+      { "label": "EXIT", "href": "#contact" }
+    ]
+  },
+  "about": {
+    "greeting": "Hello, I am",
+    "name": "Your Name",
+    "bio": "Write a short bio here \u2014 what you do, the tools you work in, and how you got started editing.",
+    "photo": null,
+    "skills": ["Pr", "Ps", "Lr", "Ae", "Cc"],
+    "education": [
+      { "years": "2019 - 2022", "school": "School Name", "detail": "Field of study" }
+    ],
+    "experience": [
+      { "title": "Freelance Editor", "detail": "Short description of the role or project." }
+    ],
+    "languages": [
+      { "name": "English", "percent": 90 },
+      { "name": "Indonesian", "percent": 100 }
+    ]
+  },
+  "projects": {
+    "title": "Recap Project",
+    "yearTag": "2026",
+    "items": [
+      { "title": "Project One", "image": null },
+      { "title": "Project Two", "image": null },
+      { "title": "Project Three", "image": null },
+      { "title": "Project Four", "image": null }
+    ]
+  },
+  "contact": {
+    "name": "Your Name",
+    "age": "Age",
+    "photo": null,
+    "socials": [
+      { "platform": "Instagram", "handle": "@yourhandle" },
+      { "platform": "TikTok", "handle": "@yourhandle" }
+    ],
+    "thankYouLine1": "THANK YOU",
+    "thankYouLine2": "2026"
+  },
+  "database": {
+    "enabled": false,
+    "supabaseUrl": "",
+    "supabaseAnonKey": "",
+    "table": "site_content",
+    "rowId": "hue-systems-video-editor",
+    "bucket": "site-media"
+  }
+}
+</script>
+<script>
+(function () {
+  const CONFIG = JSON.parse(document.getElementById('configData').textContent);
+  let editMode = false;
+
+  const $ = (id) => document.getElementById(id);
+
+  var supabaseClient = null;
+  function dbReady() {
+    return !!(CONFIG.database && CONFIG.database.enabled && CONFIG.database.supabaseUrl && CONFIG.database.supabaseAnonKey);
+  }
+  function initDb() {
+    if (!dbReady()) return;
+    if (typeof supabase === 'undefined') { setSaveStatus('DB script failed to load'); return; }
+    try {
+      supabaseClient = supabase.createClient(CONFIG.database.supabaseUrl, CONFIG.database.supabaseAnonKey);
+    } catch (e) { console.error(e); setSaveStatus('DB connection error'); }
+  }
+  function setSaveStatus(msg) {
+    var el = $('saveStatus');
+    if (el) el.textContent = msg;
+  }
+  function loadFromDatabase() {
+    if (!supabaseClient) return Promise.resolve(false);
+    return supabaseClient.from(CONFIG.database.table).select('data').eq('id', CONFIG.database.rowId).single()
+      .then(function(res) {
+        if (res.error || !res.data) return false;
+        var db = CONFIG.database;
+        Object.keys(res.data.data).forEach(function(k) { CONFIG[k] = res.data.data[k]; });
+        CONFIG.database = db;
+        return true;
+      })
+      .catch(function() { return false; });
+  }
+  function saveToDatabase() {
+    if (!supabaseClient) { setSaveStatus('Database not connected'); return Promise.resolve(false); }
+    setSaveStatus('Saving...');
+    return supabaseClient.from(CONFIG.database.table)
+      .upsert({ id: CONFIG.database.rowId, data: CONFIG, updated_at: new Date().toISOString() })
+      .then(function(res) {
+        if (res.error) { setSaveStatus('Save failed'); console.error(res.error); return false; }
+        setSaveStatus('Saved ' + new Date().toLocaleTimeString());
+        return true;
+      })
+      .catch(function(e) { setSaveStatus('Save failed'); console.error(e); return false; });
+  }
+  function storageReady() {
+    return dbReady() && !!CONFIG.database.bucket && !!supabaseClient;
+  }
+
+  function applyTheme() {
+    document.documentElement.style.setProperty('--accent', CONFIG.theme.accent);
+    document.documentElement.style.setProperty('--accent2', CONFIG.theme.accent2);
+    document.documentElement.style.setProperty('--bg', CONFIG.theme.bg);
+    updateTextContrast();
+  }
+  function updateTextContrast() {
+    var hex = CONFIG.theme.bg.replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(function(c){ return c + c; }).join('');
+    var r = parseInt(hex.substr(0, 2), 16), g = parseInt(hex.substr(2, 2), 16), b = parseInt(hex.substr(4, 2), 16);
+    var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    var root = document.documentElement.style;
+    if (luminance > 0.55) {
+      root.setProperty('--text', '#1c231f');
+      root.setProperty('--text-dim', '#5a6960');
+      root.setProperty('--heading', '#0c100d');
+      root.setProperty('--panel', '#eef1ee');
+      root.setProperty('--panel-2', '#e2e6e2');
+      root.setProperty('--border', '#c9d1ca');
+    } else {
+      root.setProperty('--text', '#b9c4d6');
+      root.setProperty('--text-dim', '#66738a');
+      root.setProperty('--heading', '#f3f6fb');
+      root.setProperty('--panel', '#0c141f');
+      root.setProperty('--panel-2', '#0a111a');
+      root.setProperty('--border', '#1a2436');
+    }
+  }
+
+  function applyEditableState() {
+    document.querySelectorAll('[data-field], [data-edit]').forEach(function(el) { el.contentEditable = editMode; });
+    document.body.classList.toggle('edit-mode', editMode);
+  }
+
+  /* ---------- INTRO ---------- */
+  function renderIntro() {
+    $('navLogo').textContent = CONFIG.siteName;
+    document.title = CONFIG.siteName;
+    $('introTitle').textContent = CONFIG.intro.title;
+    $('introYear').textContent = CONFIG.intro.year;
+    $('introRole').textContent = CONFIG.intro.role;
+
+    var menu = $('introMenu');
+    menu.innerHTML = '';
+    CONFIG.intro.menu.forEach(function(item) {
+      var a = document.createElement('a');
+      a.href = item.href;
+      a.textContent = item.label;
+      menu.appendChild(a);
+    });
+
+    renderPhotoSlot($('introPhoto'), CONFIG.intro.photo, 'intro', function(url) {
+      CONFIG.intro.photo = url;
+      renderIntro();
+    }, function() {
+      CONFIG.intro.photo = null;
+      renderIntro();
+    });
+  }
+  function syncIntroFromDom() {
+    CONFIG.siteName = $('navLogo').textContent.trim();
+    CONFIG.intro.title = $('introTitle').textContent.trim();
+    CONFIG.intro.year = $('introYear').textContent.trim();
+    CONFIG.intro.role = $('introRole').textContent.trim();
+  }
+
+  /* ---------- GENERIC PHOTO SLOT ---------- */
+  function renderPhotoSlot(container, url, pathHint, onSet, onRemove) {
+    container.innerHTML = '';
+    container.style.position = 'relative';
+    if (url) {
+      var img = document.createElement('img');
+      img.src = url;
+      img.alt = '';
+      container.appendChild(img);
+      if (editMode) {
+        var controls = document.createElement('div');
+        controls.className = 'photo-controls';
+        var replaceBtn = document.createElement('button');
+        replaceBtn.textContent = 'Replace';
+        replaceBtn.onclick = function() { uploadPhotoFor(onSet, pathHint); };
+        var removeBtn = document.createElement('button');
+        removeBtn.className = 'danger';
+        removeBtn.textContent = 'Remove';
+        removeBtn.onclick = onRemove;
+        controls.appendChild(replaceBtn);
+        controls.appendChild(removeBtn);
+        container.appendChild(controls);
+      }
+    } else if (editMode) {
+      var empty = document.createElement('div');
+      empty.className = 'photo-upload-empty';
+      var btn = document.createElement('button');
+      btn.className = 'photo-upload-btn';
+      btn.textContent = '+ Photo';
+      btn.onclick = function() { uploadPhotoFor(onSet, pathHint); };
+      empty.appendChild(btn);
+      container.appendChild(empty);
+    }
+  }
+
+  function uploadPhotoFor(setter, pathHint) {
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = function() {
+      var file = input.files[0];
+      if (!file) return;
+      setSaveStatus('Processing photo...');
+      resizeImageToBlob(file, 900, 0.85).then(function(result) {
+        if (storageReady()) {
+          setSaveStatus('Uploading photo...');
+          return uploadImageBlob(result.blob, pathHint)
+            .then(function(url) { setSaveStatus('Photo uploaded'); setter(url); })
+            .catch(function(e) {
+              console.error(e);
+              setSaveStatus('Upload failed, saved locally instead');
+              setter(result.dataUrl);
+            });
+        } else {
+          setter(result.dataUrl);
+        }
+      }).catch(function(e) {
+        console.error(e);
+        alert('Could not load that image.');
+      });
+    };
+    input.click();
+  }
+
+  function uploadImageBlob(blob, pathHint) {
+    var path = pathHint + '-' + Date.now() + '.jpg';
+    return supabaseClient.storage.from(CONFIG.database.bucket)
+      .upload(path, blob, { contentType: 'image/jpeg', upsert: true })
+      .then(function(res) {
+        if (res.error) throw res.error;
+        var pub = supabaseClient.storage.from(CONFIG.database.bucket).getPublicUrl(path);
+        return pub.data.publicUrl;
+      });
+  }
+
+  function resizeImageToBlob(file, maxWidth, quality) {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          var scale = Math.min(1, maxWidth / img.width);
+          var canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob(function(blob) {
+            if (!blob) { reject(new Error('Could not process image')); return; }
+            resolve({ blob: blob, dataUrl: canvas.toDataURL('image/jpeg', quality) });
+          }, 'image/jpeg', quality);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /* ---------- ABOUT ---------- */
+  function renderAbout() {
+    $('aboutGreeting').textContent = CONFIG.about.greeting;
+    $('aboutName').textContent = CONFIG.about.name;
+    $('aboutBio').textContent = CONFIG.about.bio;
+
+    renderPhotoSlot($('aboutPhoto'), CONFIG.about.photo, 'about', function(url) {
+      CONFIG.about.photo = url;
+      renderAbout();
+    }, function() {
+      CONFIG.about.photo = null;
+      renderAbout();
+    });
+
+    var skillsEl = $('skillsIcons');
+    skillsEl.innerHTML = '';
+    CONFIG.about.skills.forEach(function(s, i) {
+      var b = document.createElement('div');
+      b.className = 'skill-badge';
+      b.innerHTML = '<span class="skill-text" data-edit="true">' + s + '</span>' +
+        (editMode ? '<span class="rm" data-i="' + i + '">\u00d7</span>' : '');
+      skillsEl.appendChild(b);
+    });
+    if (editMode) {
+      skillsEl.querySelectorAll('.rm').forEach(function(rm) {
+        rm.onclick = function() {
+          syncAboutFromDom();
+          CONFIG.about.skills.splice(+rm.dataset.i, 1);
+          renderAbout();
+        };
+      });
+    }
+
+    var eduEl = $('educationList');
+    eduEl.innerHTML = '';
+    CONFIG.about.education.forEach(function(e, i) {
+      var div = document.createElement('div');
+      div.className = 'edu-item';
+      div.innerHTML =
+        '<div class="years" data-edit="true">' + e.years + '</div>' +
+        '<div class="school" data-edit="true">' + e.school + '</div>' +
+        '<div class="detail2" data-edit="true">' + e.detail + '</div>' +
+        (editMode ? '<button class="item-remove" data-i="' + i + '">Remove</button>' : '');
+      eduEl.appendChild(div);
+    });
+    if (editMode) {
+      eduEl.querySelectorAll('.item-remove').forEach(function(btn) {
+        btn.onclick = function() {
+          syncAboutFromDom();
+          CONFIG.about.education.splice(+btn.dataset.i, 1);
+          renderAbout();
+        };
+      });
+    }
+
+    var expEl = $('experienceList');
+    expEl.innerHTML = '';
+    CONFIG.about.experience.forEach(function(e, i) {
+      var div = document.createElement('div');
+      div.className = 'exp-item';
+      div.innerHTML =
+        '<div class="title-line" data-edit="true">' + e.title + '</div>' +
+        '<div class="detail" data-edit="true">' + e.detail + '</div>' +
+        (editMode ? '<button class="item-remove" data-i="' + i + '">Remove</button>' : '');
+      expEl.appendChild(div);
+    });
+    if (editMode) {
+      expEl.querySelectorAll('.item-remove').forEach(function(btn) {
+        btn.onclick = function() {
+          syncAboutFromDom();
+          CONFIG.about.experience.splice(+btn.dataset.i, 1);
+          renderAbout();
+        };
+      });
+    }
+
+    var langEl = $('languageRows');
+    langEl.innerHTML = '';
+    CONFIG.about.languages.forEach(function(l, i) {
+      var row = document.createElement('div');
+      row.className = 'lang-row';
+      row.innerHTML =
+        '<div class="lang-name" data-edit="true">' + l.name + '</div>' +
+        '<div class="lang-bar-track"><div class="lang-bar-fill" style="width:' + l.percent + '%"></div></div>' +
+        '<div class="lang-pct" data-edit="true">' + l.percent + '%</div>' +
+        (editMode ? '<button class="item-remove" data-i="' + i + '">x</button>' : '');
+      langEl.appendChild(row);
+    });
+    if (editMode) {
+      langEl.querySelectorAll('.item-remove').forEach(function(btn) {
+        btn.onclick = function() {
+          syncAboutFromDom();
+          CONFIG.about.languages.splice(+btn.dataset.i, 1);
+          renderAbout();
+        };
+      });
+    }
+
+    applyEditableState();
+  }
+
+  function syncAboutFromDom() {
+    CONFIG.about.greeting = $('aboutGreeting').textContent.trim();
+    CONFIG.about.name = $('aboutName').textContent.trim();
+    CONFIG.about.bio = $('aboutBio').textContent.trim();
+    CONFIG.about.skills = Array.prototype.map.call($('skillsIcons').querySelectorAll('.skill-text'), function(el) { return el.textContent.trim(); });
+    CONFIG.about.education = Array.prototype.map.call($('educationList').querySelectorAll('.edu-item'), function(el) {
+      return { years: el.querySelector('.years').textContent.trim(), school: el.querySelector('.school').textContent.trim(), detail: el.querySelector('.detail2').textContent.trim() };
+    });
+    CONFIG.about.experience = Array.prototype.map.call($('experienceList').querySelectorAll('.exp-item'), function(el) {
+      return { title: el.querySelector('.title-line').textContent.trim(), detail: el.querySelector('.detail').textContent.trim() };
+    });
+    CONFIG.about.languages = Array.prototype.map.call($('languageRows').querySelectorAll('.lang-row'), function(el) {
+      var pctText = el.querySelector('.lang-pct').textContent.replace('%', '').trim();
+      var pct = parseInt(pctText, 10);
+      if (isNaN(pct)) pct = 0;
+      return { name: el.querySelector('.lang-name').textContent.trim(), percent: pct };
+    });
+  }
+
+  /* ---------- PROJECTS ---------- */
+  function renderProjects() {
+    $('projectsTitle').textContent = CONFIG.projects.title;
+    $('projectsYearTag').textContent = CONFIG.projects.yearTag;
+
+    var grid = $('projectsGrid');
+    grid.innerHTML = '';
+    CONFIG.projects.items.forEach(function(p, i) {
+      var tile = document.createElement('div');
+      tile.className = 'project-tile';
+      if (p.image) {
+        tile.innerHTML = '<img src="' + p.image + '" alt="' + p.title + '">' +
+          '<div class="project-tile-title" data-edit="true" data-i="' + i + '">' + p.title + '</div>' +
+          (editMode ? '<button class="project-tile-remove" data-i="' + i + '">\u00d7</button>' : '');
+      } else {
+        tile.classList.add('project-tile-empty');
+        if (editMode) {
+          tile.innerHTML = '<div class="photo-upload-empty"><button class="photo-upload-btn" data-i="' + i + '">+ Photo</button></div>';
+        }
+      }
+      grid.appendChild(tile);
+    });
+
+    if (editMode) {
+      var addTile = document.createElement('button');
+      addTile.className = 'project-tile-add';
+      addTile.textContent = '+ Project';
+      addTile.onclick = function() {
+        syncProjectsFromDom();
+        CONFIG.projects.items.push({ title: 'New Project', image: null });
+        renderProjects();
+      };
+      grid.appendChild(addTile);
+
+      grid.querySelectorAll('.project-tile-remove').forEach(function(btn) {
+        btn.onclick = function() {
+          syncProjectsFromDom();
+          CONFIG.projects.items.splice(+btn.dataset.i, 1);
+          renderProjects();
+        };
+      });
+      grid.querySelectorAll('.project-tile-empty .photo-upload-btn').forEach(function(btn) {
+        btn.onclick = function() {
+          var i = +btn.dataset.i;
+          syncProjectsFromDom();
+          uploadPhotoFor(function(url) {
+            CONFIG.projects.items[i].image = url;
+            renderProjects();
+          }, 'project-' + i);
+        };
+      });
+    }
+    applyEditableState();
+  }
+
+  function syncProjectsFromDom() {
+    CONFIG.projects.title = $('projectsTitle').textContent.trim();
+    CONFIG.projects.yearTag = $('projectsYearTag').textContent.trim();
+    var titleEls = $('projectsGrid').querySelectorAll('.project-tile-title');
+    titleEls.forEach(function(el) {
+      var i = +el.dataset.i;
+      if (CONFIG.projects.items[i]) CONFIG.projects.items[i].title = el.textContent.trim();
+    });
+  }
+
+  /* ---------- CONTACT ---------- */
+  function renderContact() {
+    $('contactName').textContent = CONFIG.contact.name;
+    $('contactAge').textContent = CONFIG.contact.age;
+    $('thankYouLine1').textContent = CONFIG.contact.thankYouLine1;
+    $('thankYouLine2').textContent = CONFIG.contact.thankYouLine2;
+
+    renderPhotoSlot($('contactPhoto'), CONFIG.contact.photo, 'contact', function(url) {
+      CONFIG.contact.photo = url;
+      renderContact();
+    }, function() {
+      CONFIG.contact.photo = null;
+      renderContact();
+    });
+
+    var socialEl = $('socialList');
+    socialEl.innerHTML = '';
+    CONFIG.contact.socials.forEach(function(s, i) {
+      var row = document.createElement('div');
+      row.className = 'social-row';
+      row.innerHTML =
+        '<span class="social-dot"></span>' +
+        '<span class="social-platform" data-edit="true">' + s.platform + '</span>' +
+        '<span class="social-handle" data-edit="true">' + s.handle + '</span>' +
+        (editMode ? '<button class="item-remove" data-i="' + i + '">x</button>' : '');
+      socialEl.appendChild(row);
+    });
+    if (editMode) {
+      socialEl.querySelectorAll('.item-remove').forEach(function(btn) {
+        btn.onclick = function() {
+          syncContactFromDom();
+          CONFIG.contact.socials.splice(+btn.dataset.i, 1);
+          renderContact();
+        };
+      });
+    }
+    applyEditableState();
+  }
+
+  function syncContactFromDom() {
+    CONFIG.contact.name = $('contactName').textContent.trim();
+    CONFIG.contact.age = $('contactAge').textContent.trim();
+    CONFIG.contact.thankYouLine1 = $('thankYouLine1').textContent.trim();
+    CONFIG.contact.thankYouLine2 = $('thankYouLine2').textContent.trim();
+    var rows = $('socialList').querySelectorAll('.social-row');
+    CONFIG.contact.socials = Array.prototype.map.call(rows, function(row) {
+      return { platform: row.querySelector('.social-platform').textContent.trim(), handle: row.querySelector('.social-handle').textContent.trim() };
+    });
+  }
+
+  function syncEverythingFromDom() {
+    syncIntroFromDom();
+    syncAboutFromDom();
+    syncProjectsFromDom();
+    syncContactFromDom();
+  }
+
+  /* ---------- EDITOR MODE ---------- */
+  function renderAll() {
+    renderIntro();
+    renderAbout();
+    renderProjects();
+    renderContact();
+    applyEditableState();
+  }
+  function unlockEditor() {
+    editMode = true;
+    $('editorControls').classList.remove('hidden');
+    $('editorToggleBtn').textContent = 'Lock';
+    $('accentPicker').value = CONFIG.theme.accent;
+    $('accent2Picker').value = CONFIG.theme.accent2;
+    $('bgPicker').value = CONFIG.theme.bg;
+    renderAll();
+  }
+  function lockEditor() {
+    syncEverythingFromDom();
+    editMode = false;
+    $('editorControls').classList.add('hidden');
+    $('editorToggleBtn').textContent = 'Editor';
+    renderAll();
+    if (dbReady()) saveToDatabase();
+  }
+
+  function openLogin() {
+    $('loginOverlay').classList.remove('hidden');
+    $('loginError').classList.add('hidden');
+    $('loginPassword').value = '';
+    $('loginPassword').focus();
+  }
+  function closeLogin() { $('loginOverlay').classList.add('hidden'); }
+
+  function downloadHtml() {
+    if (editMode) syncEverythingFromDom();
+    var wasEditing = editMode;
+    if (wasEditing) lockEditor();
+    $('configData').textContent = JSON.stringify(CONFIG, null, 2);
+    var htmlStr = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([htmlStr], { type: 'text/html' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'video-editor.html';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  /* ---------- INIT / EVENTS ---------- */
+  initDb();
+  Promise.resolve(dbReady() ? loadFromDatabase() : false).then(function(loaded) {
+    if (loaded) setSaveStatus('Loaded saved version');
+    applyTheme();
+    renderAll();
+  });
+
+  $('editorToggleBtn').onclick = function() { editMode ? lockEditor() : openLogin(); };
+  $('loginCancel').onclick = closeLogin;
+  $('loginOverlay').addEventListener('click', function(e) { if (e.target.id === 'loginOverlay') closeLogin(); });
+  $('loginSubmit').onclick = function() {
+    if ($('loginPassword').value === CONFIG.editorPassword) { closeLogin(); unlockEditor(); }
+    else { $('loginError').classList.remove('hidden'); }
+  };
+  $('loginPassword').addEventListener('keydown', function(e) { if (e.key === 'Enter') $('loginSubmit').click(); });
+
+  $('addSkillBtn').onclick = function() { syncAboutFromDom(); CONFIG.about.skills.push('Sk'); renderAbout(); };
+  $('addEduBtn').onclick = function() { syncAboutFromDom(); CONFIG.about.education.push({ years: 'Year - Year', school: 'School name', detail: 'Detail' }); renderAbout(); };
+  $('addExpBtn').onclick = function() { syncAboutFromDom(); CONFIG.about.experience.push({ title: 'Role', detail: 'Detail' }); renderAbout(); };
+  $('addLangBtn').onclick = function() { syncAboutFromDom(); CONFIG.about.languages.push({ name: 'Language', percent: 50 }); renderAbout(); };
+  $('addProjectBtn').onclick = function() { syncProjectsFromDom(); CONFIG.projects.items.push({ title: 'New Project', image: null }); renderProjects(); };
+  $('addSocialBtn').onclick = function() { syncContactFromDom(); CONFIG.contact.socials.push({ platform: 'Platform', handle: '@handle' }); renderContact(); };
+
+  $('saveDbBtn').onclick = function() {
+    syncEverythingFromDom();
+    if (!dbReady()) { setSaveStatus('Connect a database first (see file comments)'); return; }
+    saveToDatabase();
+  };
+  $('exportBtn').onclick = downloadHtml;
+  $('accentPicker').oninput = function(e) { CONFIG.theme.accent = e.target.value; document.documentElement.style.setProperty('--accent', e.target.value); };
+  $('accent2Picker').oninput = function(e) { CONFIG.theme.accent2 = e.target.value; document.documentElement.style.setProperty('--accent2', e.target.value); };
+  $('bgPicker').oninput = function(e) { CONFIG.theme.bg = e.target.value; document.documentElement.style.setProperty('--bg', e.target.value); updateTextContrast(); };
+})();
+</script>
+
+</body>
+</html>
