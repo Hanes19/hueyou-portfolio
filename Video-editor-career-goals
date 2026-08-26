@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUE. SYSTEMS — Video Editor Career Goals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #131313;
+    --panel: #1c1c1c;
+    --panel-2: #181818;
+    --border: #2c2c2c;
+    --text: #c7c7c7;
+    --text-dim: #7a7a7a;
+    --heading: #f2f2f2;
+    --accent: #ff6a2c;
+    --accent2: #ff8a52;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; overflow-x: hidden; }
+  body::before {
+    content: ""; position: fixed; inset: 0;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  .hidden { display: none !important; }
+  a { color: inherit; text-decoration: none; }
+  .display { font-family: 'Anton', sans-serif; font-weight: 400; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+<style>
+  /* NAV */
+  nav { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 16px 48px; background: rgba(6,11,9,0.9); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 12px; }
+  .nav-logo { font-family: 'Anton', sans-serif; font-size: 14px; color: var(--heading); display: flex; align-items: center; gap: 8px; }
+  .nav-logo .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .pills { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pill { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); color: var(--text-dim); transition: all .2s; }
+  .pill:hover { border-color: var(--accent2); color: var(--text); }
+  .pill.active { background: var(--accent); border-color: var(--accent); color: #131313; }
+  .back-link { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); border: 1px solid var(--border); padding: 7px 13px; border-radius: 4px; }
+  .back-link:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* HEADER */
+  .page-header { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 70px 48px 40px; border-bottom: 1px solid var(--border); }
+  .page-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 2px; color: var(--accent2); text-transform: uppercase; margin-bottom: 10px; }
+  .page-title { font-family: 'Anton', sans-serif; font-size: clamp(32px, 5vw, 52px); color: var(--heading); margin-bottom: 16px; }
+  .page-intro { font-size: 14.5px; line-height: 1.7; color: var(--text); max-width: 720px; margin-bottom: 20px; }
+  .contact-row { display: flex; gap: 24px; flex-wrap: wrap; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-dim); }
+  .contact-row span { color: var(--accent2); }
+
+  /* GOALS */
+  .goals-main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 50px 48px 30px; }
+  .goal-block { margin-bottom: 48px; }
+  .goal-title { font-family: 'Anton', sans-serif; font-size: 20px; color: var(--heading); margin-bottom: 6px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .goal-subtitle { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent2); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
+  .goal-item { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; }
+  .goal-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-top: 8px; flex-shrink: 0; }
+  .goal-text { font-size: 14.5px; line-height: 1.6; color: var(--text); flex: 1; }
+  .goal-remove { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--accent); background: none; border: 1px solid var(--border); padding: 3px 9px; border-radius: 3px; cursor: pointer; height: fit-content; }
+  .add-item-btn { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent2); background: none; border: 1px dashed var(--border); padding: 6px 14px; border-radius: 4px; cursor: pointer; margin-top: 8px; }
+  .goal-paragraph { font-size: 14.5px; line-height: 1.75; color: var(--text); max-width: 780px; }
+  .industry-block, .motivation-block { padding: 28px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
+</style>
+<style>
+  body.edit-mode [contenteditable="true"] { outline: 1px dashed var(--accent2); outline-offset: 3px; border-radius: 2px; cursor: text; caret-color: var(--accent2); color: inherit; }
+  body.edit-mode [contenteditable="true"]:hover { outline-color: var(--accent); }
+  body.edit-mode [contenteditable="true"]:focus { outline: 2px solid var(--accent2); background: rgba(47,182,224,0.08); }
+
+  /* EDITOR TOOLBAR */
+  #editorToolbar { position: fixed; bottom: 22px; right: 22px; z-index: 100; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; font-family: 'IBM Plex Mono', monospace; }
+  .toolbar-btn { background: var(--panel); border: 1px solid var(--border); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 9px 14px; border-radius: 5px; cursor: pointer; box-shadow: 0 8px 24px -8px rgba(0,0,0,.6); white-space: nowrap; }
+  .toolbar-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+  .toolbar-btn.accent-btn { background: var(--accent2); color: #06120a; border-color: var(--accent2); font-weight: 600; }
+  #editorControls { display: flex; flex-direction: column; gap: 8px; align-items: stretch; background: var(--panel); border: 1px solid var(--border); padding: 14px; border-radius: 8px; box-shadow: 0 8px 24px -8px rgba(0,0,0,.6); min-width: 190px; max-height: 70vh; overflow-y: auto; }
+  .color-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--text-dim); }
+  .color-row input[type=color] { width: 30px; height: 22px; border: 1px solid var(--border); border-radius: 3px; background: none; cursor: pointer; padding: 0; }
+
+  /* LOGIN MODAL */
+  .login-overlay { position: fixed; inset: 0; background: rgba(6,10,17,0.8); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 200; }
+  .login-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 28px; width: 280px; box-shadow: 0 30px 80px -20px rgba(0,0,0,.7); }
+  .login-title { font-family: 'Anton', sans-serif; font-size: 16px; color: var(--heading); margin-bottom: 8px; }
+  .login-note { font-size: 12px; color: var(--text-dim); line-height: 1.5; margin-bottom: 16px; }
+  #loginPassword { width: 100%; background: var(--panel-2); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 4px; font-size: 13px; margin-bottom: 14px; font-family: 'IBM Plex Mono', monospace; }
+  .login-actions { display: flex; gap: 8px; }
+  .login-actions button { flex: 1; font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 9px; border-radius: 4px; cursor: pointer; }
+  .btn-primary { background: var(--accent); color: #131313; border: 1px solid var(--accent); }
+  .btn-secondary { background: none; color: var(--text); border: 1px solid var(--border); }
+  .login-error { color: var(--accent); font-size: 12px; margin-top: 10px; }
+</style>
+<nav>
+  <div class="nav-logo"><span class="dot"></span><span id="navLogo"></span></div>
+  <div class="pills">
+    <a href="video-editor.html" class="pill">HOME</a>
+    <a href="video-editor-skills.html" class="pill">SKILLS</a>
+    <a href="video-editor-career-goals.html" class="pill active">CAREER GOALS</a>
+  </div>
+  <a class="back-link mono" href="index.html">&larr; All portfolios</a>
+</nav>
+
+<header class="page-header">
+  <div class="page-eyebrow">Career Goals Portfolio</div>
+  <h1 class="page-title display" id="pageTitle" data-field="title"></h1>
+  <p class="page-intro" id="pageIntro" data-field="intro"></p>
+  <div class="contact-row">
+    <div><span>Name:</span> <span data-field="name" id="headerName"></span></div>
+    <div><span>Email:</span> <span data-field="email" id="headerEmail"></span></div>
+    <div><span>Location:</span> <span data-field="location" id="headerLocation"></span></div>
+  </div>
+</header>
+
+<main class="goals-main">
+  <div class="goal-block">
+    <div class="goal-title display" id="shortTitle" data-field="shortTitle"></div>
+    <div class="goal-subtitle" id="shortSubtitle" data-field="shortSubtitle"></div>
+    <div id="shortList"></div>
+    <button class="add-item-btn" id="addShortBtn">+ Goal</button>
+  </div>
+
+  <div class="goal-block">
+    <div class="goal-title display" id="midTitle" data-field="midTitle"></div>
+    <div class="goal-subtitle" id="midSubtitle" data-field="midSubtitle"></div>
+    <div id="midList"></div>
+    <button class="add-item-btn" id="addMidBtn">+ Goal</button>
+  </div>
+
+  <div class="goal-block">
+    <div class="goal-title display" id="longTitle" data-field="longTitle"></div>
+    <div class="goal-subtitle" id="longSubtitle" data-field="longSubtitle"></div>
+    <div id="longList"></div>
+    <button class="add-item-btn" id="addLongBtn">+ Goal</button>
+  </div>
+
+  <div class="goal-block industry-block">
+    <div class="goal-title display">Preferred Industry / Domain</div>
+    <p class="goal-paragraph" id="industryText" data-field="industry"></p>
+  </div>
+
+  <div class="goal-block" style="margin-top:48px;">
+    <div class="goal-title display">Skill Development Plan</div>
+    <div class="goal-subtitle">Skills I need to acquire to reach these goals</div>
+    <div id="skillPlanList"></div>
+    <button class="add-item-btn" id="addSkillPlanBtn">+ Skill to develop</button>
+  </div>
+
+  <div class="goal-block motivation-block" style="margin-top:48px;">
+    <div class="goal-title display">Motivation &amp; Values</div>
+    <p class="goal-paragraph" id="motivationText" data-field="motivation"></p>
+  </div>
+</main>
+
+<div id="editorToolbar">
+  <div id="editorControls" class="hidden">
+    <div class="color-row"><span>Accent</span><input type="color" id="accentPicker"></div>
+    <div class="color-row"><span>Accent 2</span><input type="color" id="accent2Picker"></div>
+    <div class="color-row"><span>Background</span><input type="color" id="bgPicker"></div>
+    <button class="toolbar-btn accent-btn" id="saveDbBtn">Save changes</button>
+    <button class="toolbar-btn" id="exportBtn">Download backup</button>
+    <div id="saveStatus" class="mono" style="font-size:11px;color:var(--text-dim);"></div>
+  </div>
+  <button class="toolbar-btn" id="editorToggleBtn">Editor</button>
+</div>
+
+<div id="loginOverlay" class="login-overlay hidden">
+  <div class="login-card">
+    <div class="login-title">Editor login</div>
+    <p class="login-note">Client-side lock for your own convenience, not real security.</p>
+    <input type="password" id="loginPassword" class="mono" placeholder="Password">
+    <div class="login-actions">
+      <button class="btn-primary" id="loginSubmit">Unlock</button>
+      <button class="btn-secondary" id="loginCancel">Cancel</button>
+    </div>
+    <div class="login-error hidden" id="loginError">Incorrect password.</div>
+  </div>
+</div>
+<!--
+  EDIT ME - all content below, or edit visually via Editor mode (password: hue2026).
+
+  DATABASE SETUP - same Supabase project/table as your other pages, its
+  own row ("hue-systems-se-career-goals"). See software-engineer.html's
+  comments for the full setup SQL if you haven't done it yet.
+-->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="application/json" id="configData">
+{
+  "editorPassword": "hue2026",
+  "siteName": "HUE. SYSTEMS",
+  "theme": {
+    "accent": "#ff6a2c",
+    "accent2": "#ff8a52",
+    "bg": "#131313"
+  },
+  "header": {
+    "title": "Career Goals",
+    "intro": "Where I'm headed as an editor, the kind of work I want to be doing, and the skills I'm building to get there.",
+    "name": "Your Name",
+    "email": "you@email.com",
+    "location": "City, Country"
+  },
+  "shortTitle": "Short-Term Goals",
+  "shortSubtitle": "1 \u2013 2 years",
+  "shortTermGoals": [
+    "Build a strong freelance client base with repeat brand and social media work.",
+    "Level up color grading skills to reduce reliance on presets and LUTs.",
+    "Publish a personal reel that reflects the specific style I want to be hired for."
+  ],
+  "midTitle": "Mid-Term Goals",
+  "midSubtitle": "3 \u2013 5 years",
+  "midTermGoals": [
+    "Move from freelance to a lead editor role at a production house or agency.",
+    "Develop stronger motion graphics and light VFX skills to take on hybrid projects.",
+    "Direct or co-direct a short-form documentary project from concept to final cut."
+  ],
+  "longTitle": "Long-Term Goals",
+  "longSubtitle": "7 \u2013 10 years",
+  "longTermGoals": [
+    "Move into a creative director or post-production supervisor role.",
+    "Build a small team or studio taking on branded and documentary work.",
+    "Mentor junior editors coming up in the industry."
+  ],
+  "industry": "I'm most drawn to documentary and branded content \u2014 work where editing decisions genuinely shape how a story lands, not just how polished it looks. I'd also like to keep a foot in social/short-form work, since the fast iteration and platform-specific thinking keeps my instincts sharp.",
+  "skillDevelopmentPlan": [
+    "Cinema 4D / 3D motion graphics \u2014 move past titles into full composites.",
+    "Cinematography basics \u2014 understand shooting better to edit better.",
+    "Sound design \u2014 go beyond mixing into building original sound beds.",
+    "Pitching and treatment writing \u2014 get comfortable proposing edits, not just executing briefs."
+  ],
+  "motivation": "I care about pacing \u2014 the difference between a cut that just moves and one that actually makes you feel something. I'm motivated by finding the version of a story that only exists in the edit: the structure nobody saw in the raw footage. Long-term, I want my work to be trusted with harder, messier footage, because that's where editing actually matters most.",
+  "database": {
+    "enabled": false,
+    "supabaseUrl": "",
+    "supabaseAnonKey": "",
+    "table": "site_content",
+    "rowId": "hue-systems-ve-career-goals",
+    "bucket": "site-media"
+  }
+}
+</script>
+<script>
+(function () {
+  const CONFIG = JSON.parse(document.getElementById('configData').textContent);
+  let editMode = false;
+
+  const $ = (id) => document.getElementById(id);
+
+  var supabaseClient = null;
+  function dbReady() {
+    return !!(CONFIG.database && CONFIG.database.enabled && CONFIG.database.supabaseUrl && CONFIG.database.supabaseAnonKey);
+  }
+  function initDb() {
+    if (!dbReady()) return;
+    if (typeof supabase === 'undefined') { setSaveStatus('DB script failed to load'); return; }
+    try {
+      supabaseClient = supabase.createClient(CONFIG.database.supabaseUrl, CONFIG.database.supabaseAnonKey);
+    } catch (e) { console.error(e); setSaveStatus('DB connection error'); }
+  }
+  function setSaveStatus(msg) {
+    var el = $('saveStatus');
+    if (el) el.textContent = msg;
+  }
+  function loadFromDatabase() {
+    if (!supabaseClient) return Promise.resolve(false);
+    return supabaseClient.from(CONFIG.database.table).select('data').eq('id', CONFIG.database.rowId).single()
+      .then(function(res) {
+        if (res.error || !res.data) return false;
+        var db = CONFIG.database;
+        Object.keys(res.data.data).forEach(function(k) { CONFIG[k] = res.data.data[k]; });
+        CONFIG.database = db;
+        return true;
+      })
+      .catch(function() { return false; });
+  }
+  function saveToDatabase() {
+    if (!supabaseClient) { setSaveStatus('Database not connected'); return Promise.resolve(false); }
+    setSaveStatus('Saving...');
+    return supabaseClient.from(CONFIG.database.table)
+      .upsert({ id: CONFIG.database.rowId, data: CONFIG, updated_at: new Date().toISOString() })
+      .then(function(res) {
+        if (res.error) { setSaveStatus('Save failed'); console.error(res.error); return false; }
+        setSaveStatus('Saved ' + new Date().toLocaleTimeString());
+        return true;
+      })
+      .catch(function(e) { setSaveStatus('Save failed'); console.error(e); return false; });
+  }
+
+  function applyTheme() {
+    document.documentElement.style.setProperty('--accent', CONFIG.theme.accent);
+    document.documentElement.style.setProperty('--accent2', CONFIG.theme.accent2);
+    document.documentElement.style.setProperty('--bg', CONFIG.theme.bg);
+    updateTextContrast();
+  }
+  function updateTextContrast() {
+    var hex = CONFIG.theme.bg.replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(function(c){ return c + c; }).join('');
+    var r = parseInt(hex.substr(0, 2), 16), g = parseInt(hex.substr(2, 2), 16), b = parseInt(hex.substr(4, 2), 16);
+    var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    var root = document.documentElement.style;
+    if (luminance > 0.55) {
+      root.setProperty('--text', '#1c231f');
+      root.setProperty('--text-dim', '#5a6960');
+      root.setProperty('--heading', '#0c100d');
+      root.setProperty('--panel', '#eef1ee');
+      root.setProperty('--panel-2', '#e2e6e2');
+      root.setProperty('--border', '#c9d1ca');
+    } else {
+      root.setProperty('--text', '#c7c7c7');
+      root.setProperty('--text-dim', '#7a7a7a');
+      root.setProperty('--heading', '#f2f2f2');
+      root.setProperty('--panel', '#1c1c1c');
+      root.setProperty('--panel-2', '#181818');
+      root.setProperty('--border', '#2c2c2c');
+    }
+  }
+
+  function applyEditableState() {
+    document.querySelectorAll('[data-field], [data-edit]').forEach(function(el) { el.contentEditable = editMode; });
+    document.body.classList.toggle('edit-mode', editMode);
+  }
+
+  /* ---------- HEADER ---------- */
+  function renderHeader() {
+    $('navLogo').textContent = CONFIG.siteName;
+    document.title = CONFIG.siteName + ' \u2014 Career Goals';
+    $('pageTitle').textContent = CONFIG.header.title;
+    $('pageIntro').textContent = CONFIG.header.intro;
+    $('headerName').textContent = CONFIG.header.name;
+    $('headerEmail').textContent = CONFIG.header.email;
+    $('headerLocation').textContent = CONFIG.header.location;
+  }
+  function syncHeaderFromDom() {
+    CONFIG.siteName = $('navLogo').textContent.trim();
+    CONFIG.header.title = $('pageTitle').textContent.trim();
+    CONFIG.header.intro = $('pageIntro').textContent.trim();
+    CONFIG.header.name = $('headerName').textContent.trim();
+    CONFIG.header.email = $('headerEmail').textContent.trim();
+    CONFIG.header.location = $('headerLocation').textContent.trim();
+  }
+
+  /* ---------- GENERIC GOAL LIST (reused for short/mid/long-term + skill plan) ---------- */
+  function renderGoalList(listElId, items, onChange) {
+    var list = $(listElId);
+    list.innerHTML = '';
+    items.forEach(function(text, i) {
+      var row = document.createElement('div');
+      row.className = 'goal-item';
+      row.innerHTML =
+        '<span class="goal-dot"></span>' +
+        '<span class="goal-text" data-edit="true" data-i="' + i + '">' + text + '</span>' +
+        (editMode ? '<button class="goal-remove" data-i="' + i + '">Remove</button>' : '');
+      list.appendChild(row);
+    });
+    if (editMode) {
+      list.querySelectorAll('.goal-remove').forEach(function(btn) {
+        btn.onclick = function() {
+          syncGoalListFromDom(listElId, items);
+          items.splice(+btn.dataset.i, 1);
+          onChange();
+        };
+      });
+    }
+  }
+  function syncGoalListFromDom(listElId, items) {
+    var texts = Array.prototype.map.call($(listElId).querySelectorAll('.goal-text'), function(el) { return el.textContent.trim(); });
+    items.length = 0;
+    texts.forEach(function(t) { items.push(t); });
+  }
+
+  /* ---------- SECTION RENDERERS ---------- */
+  function renderShort() {
+    $('shortTitle').textContent = CONFIG.shortTitle;
+    $('shortSubtitle').textContent = CONFIG.shortSubtitle;
+    renderGoalList('shortList', CONFIG.shortTermGoals, renderShort);
+  }
+  function renderMid() {
+    $('midTitle').textContent = CONFIG.midTitle;
+    $('midSubtitle').textContent = CONFIG.midSubtitle;
+    renderGoalList('midList', CONFIG.midTermGoals, renderMid);
+  }
+  function renderLong() {
+    $('longTitle').textContent = CONFIG.longTitle;
+    $('longSubtitle').textContent = CONFIG.longSubtitle;
+    renderGoalList('longList', CONFIG.longTermGoals, renderLong);
+  }
+  function renderSkillPlan() {
+    renderGoalList('skillPlanList', CONFIG.skillDevelopmentPlan, renderSkillPlan);
+  }
+  function renderIndustryAndMotivation() {
+    $('industryText').textContent = CONFIG.industry;
+    $('motivationText').textContent = CONFIG.motivation;
+  }
+
+  function syncGoalsFromDom() {
+    CONFIG.shortTitle = $('shortTitle').textContent.trim();
+    CONFIG.shortSubtitle = $('shortSubtitle').textContent.trim();
+    syncGoalListFromDom('shortList', CONFIG.shortTermGoals);
+
+    CONFIG.midTitle = $('midTitle').textContent.trim();
+    CONFIG.midSubtitle = $('midSubtitle').textContent.trim();
+    syncGoalListFromDom('midList', CONFIG.midTermGoals);
+
+    CONFIG.longTitle = $('longTitle').textContent.trim();
+    CONFIG.longSubtitle = $('longSubtitle').textContent.trim();
+    syncGoalListFromDom('longList', CONFIG.longTermGoals);
+
+    syncGoalListFromDom('skillPlanList', CONFIG.skillDevelopmentPlan);
+
+    CONFIG.industry = $('industryText').textContent.trim();
+    CONFIG.motivation = $('motivationText').textContent.trim();
+  }
+
+  function renderAll() {
+    renderHeader();
+    renderShort();
+    renderMid();
+    renderLong();
+    renderSkillPlan();
+    renderIndustryAndMotivation();
+    applyEditableState();
+  }
+  function syncEverythingFromDom() {
+    syncHeaderFromDom();
+    syncGoalsFromDom();
+  }
+
+  /* ---------- EDITOR MODE ---------- */
+  function unlockEditor() {
+    editMode = true;
+    $('editorControls').classList.remove('hidden');
+    $('editorToggleBtn').textContent = 'Lock';
+    $('accentPicker').value = CONFIG.theme.accent;
+    $('accent2Picker').value = CONFIG.theme.accent2;
+    $('bgPicker').value = CONFIG.theme.bg;
+    renderAll();
+  }
+  function lockEditor() {
+    syncEverythingFromDom();
+    editMode = false;
+    $('editorControls').classList.add('hidden');
+    $('editorToggleBtn').textContent = 'Editor';
+    renderAll();
+    if (dbReady()) saveToDatabase();
+  }
+
+  function openLogin() {
+    $('loginOverlay').classList.remove('hidden');
+    $('loginError').classList.add('hidden');
+    $('loginPassword').value = '';
+    $('loginPassword').focus();
+  }
+  function closeLogin() { $('loginOverlay').classList.add('hidden'); }
+
+  function downloadHtml() {
+    if (editMode) syncEverythingFromDom();
+    var wasEditing = editMode;
+    if (wasEditing) lockEditor();
+    $('configData').textContent = JSON.stringify(CONFIG, null, 2);
+    var htmlStr = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([htmlStr], { type: 'text/html' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'video-editor-career-goals.html';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  /* ---------- INIT / EVENTS ---------- */
+  initDb();
+  Promise.resolve(dbReady() ? loadFromDatabase() : false).then(function(loaded) {
+    if (loaded) setSaveStatus('Loaded saved version');
+    applyTheme();
+    renderAll();
+  });
+
+  $('editorToggleBtn').onclick = function() { editMode ? lockEditor() : openLogin(); };
+  $('loginCancel').onclick = closeLogin;
+  $('loginOverlay').addEventListener('click', function(e) { if (e.target.id === 'loginOverlay') closeLogin(); });
+  $('loginSubmit').onclick = function() {
+    if ($('loginPassword').value === CONFIG.editorPassword) { closeLogin(); unlockEditor(); }
+    else { $('loginError').classList.remove('hidden'); }
+  };
+  $('loginPassword').addEventListener('keydown', function(e) { if (e.key === 'Enter') $('loginSubmit').click(); });
+
+  $('addShortBtn').onclick = function() { syncGoalListFromDom('shortList', CONFIG.shortTermGoals); CONFIG.shortTermGoals.push('New short-term goal'); renderShort(); applyEditableState(); };
+  $('addMidBtn').onclick = function() { syncGoalListFromDom('midList', CONFIG.midTermGoals); CONFIG.midTermGoals.push('New mid-term goal'); renderMid(); applyEditableState(); };
+  $('addLongBtn').onclick = function() { syncGoalListFromDom('longList', CONFIG.longTermGoals); CONFIG.longTermGoals.push('New long-term goal'); renderLong(); applyEditableState(); };
+  $('addSkillPlanBtn').onclick = function() { syncGoalListFromDom('skillPlanList', CONFIG.skillDevelopmentPlan); CONFIG.skillDevelopmentPlan.push('New skill to develop'); renderSkillPlan(); applyEditableState(); };
+
+  $('saveDbBtn').onclick = function() {
+    syncEverythingFromDom();
+    if (!dbReady()) { setSaveStatus('Connect a database first (see file comments)'); return; }
+    saveToDatabase();
+  };
+  $('exportBtn').onclick = downloadHtml;
+  $('accentPicker').oninput = function(e) { CONFIG.theme.accent = e.target.value; document.documentElement.style.setProperty('--accent', e.target.value); };
+  $('accent2Picker').oninput = function(e) { CONFIG.theme.accent2 = e.target.value; document.documentElement.style.setProperty('--accent2', e.target.value); };
+  $('bgPicker').oninput = function(e) { CONFIG.theme.bg = e.target.value; document.documentElement.style.setProperty('--bg', e.target.value); updateTextContrast(); };
+})();
+</script>
+
+</body>
+</html>
