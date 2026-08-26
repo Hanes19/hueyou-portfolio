@@ -434,10 +434,10 @@
     "thankYouLine1": "THANK YOU",
     "thankYouLine2": "2026"
   },
-  "database": {
-    "enabled": false,
-    "supabaseUrl": "",
-    "supabaseAnonKey": "",
+"database": {
+    "enabled": true,
+    "supabaseUrl": "https://mmeoyjkxgptatbzitudi.supabase.co",
+    "supabaseAnonKey": "sb_publishable_MwfGmetWb3YASDf98FRKMQ_SQ1-i-yG",
     "table": "site_content",
     "rowId": "hue-systems-software-engineer",
     "bucket": "site-media"
@@ -984,6 +984,62 @@
   $('accent2Picker').oninput = function(e) { CONFIG.theme.accent2 = e.target.value; document.documentElement.style.setProperty('--accent2', e.target.value); };
   $('bgPicker').oninput = function(e) { CONFIG.theme.bg = e.target.value; document.documentElement.style.setProperty('--bg', e.target.value); updateTextContrast(); };
 })();
+</script>
+
+<!-- 1. The Contact Form -->
+<div id="contact-section" style="max-width: 400px; margin: 20px auto; font-family: sans-serif;">
+  <h3>Contact Me</h3>
+  <form id="contact-form" style="display: flex; flex-direction: column; gap: 10px;">
+    <input type="text" id="name" placeholder="Your Name" required style="padding: 8px;" />
+    <input type="email" id="email" placeholder="Your Email" required style="padding: 8px;" />
+    <textarea id="message" placeholder="Your Message" rows="4" required style="padding: 8px;"></textarea>
+    <button type="submit" style="padding: 10px; cursor: pointer; background: #007bff; color: white; border: none;">Send Message</button>
+  </form>
+</div>
+
+<!-- 2. Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- 3. Database Connection & Submission Logic -->
+<script>
+  // Replace these with your actual Supabase Project URL and Anon Key
+  const SUPABASE_URL = "https://mmeoyjkxgptatbzitudi.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_MwfGmetWb3YASDf98FRKMQ_SQ1-i-yG";
+
+  // Initialize Supabase
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Handle Form Submission
+  const contactForm = document.getElementById("contact-form");
+
+  contactForm.addEventListener("submit", async (e) => {
+    e.preventDefault(); // Prevent page reload
+
+    // Grab values from the form
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const message = document.getElementById("message").value;
+    const submitBtn = contactForm.querySelector('button');
+
+    submitBtn.textContent = "Sending...";
+    submitBtn.disabled = true;
+
+    // Insert into Supabase 'messages' table
+    const { data, error } = await supabase
+      .from("messages")
+      .insert([{ name: name, email: email, message: message }]);
+
+    if (error) {
+      console.error(error);
+      alert("Error sending message: " + error.message);
+    } else {
+      alert("Message sent successfully!");
+      contactForm.reset(); // Clear the form
+    }
+
+    submitBtn.textContent = "Send Message";
+    submitBtn.disabled = false;
+  });
 </script>
 
 </body>
