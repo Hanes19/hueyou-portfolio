@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUE. SYSTEMS — Projects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #131313;
+    --panel: #1c1c1c;
+    --panel-2: #181818;
+    --border: #2c2c2c;
+    --text: #c7c7c7;
+    --text-dim: #7a7a7a;
+    --heading: #f2f2f2;
+    --accent: #ff6a2c;
+    --accent2: #ff8a52;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; overflow-x: hidden; }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  a { color: inherit; text-decoration: none; }
+  .display { font-family: 'Anton', sans-serif; font-weight: 400; letter-spacing: 0.5px; }
+
+  /* NAV */
+  nav { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 16px 48px; background: rgba(19,19,19,0.9); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 12px; }
+  .nav-logo { font-family: 'Anton', sans-serif; font-size: 14px; color: var(--heading); display: flex; align-items: center; gap: 8px; }
+  .nav-logo .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .pills { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pill { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); color: var(--text-dim); transition: all .2s; }
+  .pill:hover { border-color: var(--accent2); color: var(--text); }
+  .pill.active { background: var(--accent2); border-color: var(--accent2); color: #131313; }
+  .back-link { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); border: 1px solid var(--border); padding: 7px 13px; border-radius: 4px; }
+  .back-link:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* HEADER */
+  .page-header { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 70px 48px 40px; border-bottom: 1px solid var(--border); }
+  .page-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 2px; color: var(--accent2); text-transform: uppercase; margin-bottom: 10px; }
+  .page-title { font-family: 'Anton', sans-serif; font-size: clamp(32px, 5vw, 52px); color: var(--heading); margin-bottom: 16px; }
+  .page-intro { font-size: 14.5px; line-height: 1.7; color: var(--text); max-width: 720px; }
+
+  /* PROJECTS */
+  .projects-main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 50px 48px 100px; display: flex; flex-direction: column; gap: 28px; }
+  .project-card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 32px; }
+  .project-card-head { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 22px; padding-bottom: 20px; border-bottom: 1px solid var(--panel-2); flex-wrap: wrap; justify-content: space-between; }
+  .project-index { font-family: 'Anton', sans-serif; font-size: 28px; color: var(--accent2); opacity: 0.5; line-height: 1; }
+  .project-title-wrap { flex: 1; min-width: 220px; }
+  .project-title { font-family: 'Anton', sans-serif; font-size: 20px; color: var(--heading); margin-bottom: 6px; }
+  .project-role { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+  .project-type-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); color: var(--text-dim); height: fit-content; }
+
+  .project-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .project-section-label { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent2); margin-bottom: 8px; }
+  .project-section-body { font-size: 13.5px; line-height: 1.65; color: var(--text); }
+  .project-section { margin-bottom: 4px; }
+  .project-section.full { grid-column: 1 / -1; }
+
+  .tool-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tool-tag { font-family: 'IBM Plex Mono', monospace; font-size: 11px; background: var(--panel-2); border: 1px solid var(--border); color: var(--heading); padding: 5px 10px; border-radius: 5px; }
+
+  .contrib-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .contrib-list li { position: relative; padding-left: 16px; font-size: 13.5px; line-height: 1.6; color: var(--text); }
+  .contrib-list li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); }
+
+  .evidence-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+  .evidence-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--accent2); border: 1px solid var(--border); padding: 7px 12px; border-radius: 5px; transition: border-color .15s, color .15s; }
+  .evidence-link:hover { border-color: var(--accent2); }
+  .evidence-link::before { content: "→"; }
+
+  @media (max-width: 720px) { .project-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><span class="dot"></span><span>HUE. SYSTEMS</span></div>
+  <div class="pills">
+    <a href="video-editor.html" class="pill">HOME</a>
+    <a href="video-editor-skills.html" class="pill">SKILLS</a>
+    <a href="video-editor-projects.html" class="pill active">PROJECTS</a>
+    <a href="video-editor-gap-analysis.html" class="pill">GAP ANALYSIS</a>
+    <a href="video-editor-career-goals.html" class="pill">CAREER GOALS</a>
+  </div>
+  <a class="back-link mono" href="index.html">&larr; All portfolios</a>
+</nav>
+
+<header class="page-header">
+  <div class="page-eyebrow">Project Portfolio</div>
+  <h1 class="page-title display">Projects</h1>
+  <p class="page-intro">Selected coverage, editing, and creative work — the problem each project solved, the tools involved, and what came of it. Evidence links point to sample output, galleries, or demo reels.</p>
+</header>
+
+<main class="projects-main">
+
+  <article class="project-card">
+    <div class="project-card-head">
+      <div style="display:flex; gap:16px; align-items:flex-start;">
+        <div class="project-index mono">01</div>
+        <div class="project-title-wrap">
+          <div class="project-title">Student Organization Event Coverage</div>
+          <div class="project-role mono">Photographer</div>
+        </div>
+      </div>
+      <div class="project-type-tag mono">Personal · Non-Programming</div>
+    </div>
+    <div class="project-grid">
+      <div class="project-section">
+        <div class="project-section-label">Problem Statement</div>
+        <div class="project-section-body">Our student organization's events had little professional documentation, which made it hard to promote future events or showcase activities to sponsors.</div>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Technologies / Tools</div>
+        <div class="tool-tags">
+          <span class="tool-tag">DSLR Camera</span>
+          <span class="tool-tag">Adobe Lightroom</span>
+          <span class="tool-tag">Canva</span>
+        </div>
+      </div>
+      <div class="project-section full">
+        <div class="project-section-label">Key Contributions</div>
+        <ul class="contrib-list">
+          <li>Captured candid and posed photography across five organization events.</li>
+          <li>Edited and color-corrected selects for consistent, publishable quality.</li>
+          <li>Curated and captioned photo sets for social media release.</li>
+        </ul>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Outcome &amp; Impact</div>
+        <div class="project-section-body">Noticeably improved the organization's social media presence and engagement, and the photo sets were later reused in a sponsorship deck.</div>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Evidence</div>
+        <div class="evidence-row">
+          <a class="evidence-link mono" href="#">Photo gallery</a>
+          <a class="evidence-link mono" href="#">Instagram post</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="project-card">
+    <div class="project-card-head">
+      <div style="display:flex; gap:16px; align-items:flex-start;">
+        <div class="project-index mono">02</div>
+        <div class="project-title-wrap">
+          <div class="project-title">Campus Short Film — "Fall Season"</div>
+          <div class="project-role mono">Video Editor</div>
+        </div>
+      </div>
+      <div class="project-type-tag mono">Academic · Non-Programming</div>
+    </div>
+    <div class="project-grid">
+      <div class="project-section">
+        <div class="project-section-label">Problem Statement</div>
+        <div class="project-section-body">Raw footage from a student film shoot needed to be assembled into a coherent, well-paced short film in time for a class screening deadline.</div>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Technologies / Tools</div>
+        <div class="tool-tags">
+          <span class="tool-tag">Adobe Premiere Pro</span>
+          <span class="tool-tag">DaVinci Resolve</span>
+          <span class="tool-tag">Audacity</span>
+        </div>
+      </div>
+      <div class="project-section full">
+        <div class="project-section-label">Key Contributions</div>
+        <ul class="contrib-list">
+          <li>Assembled the rough cut from raw footage and organized the editing timeline.</li>
+          <li>Color graded scenes for a consistent seasonal mood across locations.</li>
+          <li>Mixed dialogue, ambient sound, and a licensed music track for the final export.</li>
+        </ul>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Outcome &amp; Impact</div>
+        <div class="project-section-body">Screened at the class showcase and well received by classmates and the instructor for pacing and color consistency.</div>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Evidence</div>
+        <div class="evidence-row">
+          <a class="evidence-link mono" href="#">Watch demo reel</a>
+          <a class="evidence-link mono" href="#">Behind the scenes</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="project-card">
+    <div class="project-card-head">
+      <div style="display:flex; gap:16px; align-items:flex-start;">
+        <div class="project-index mono">03</div>
+        <div class="project-title-wrap">
+          <div class="project-title">Small Business Promo Reels</div>
+          <div class="project-role mono">Freelance Video Editor</div>
+        </div>
+      </div>
+      <div class="project-type-tag mono">Freelance · Non-Programming</div>
+    </div>
+    <div class="project-grid">
+      <div class="project-section">
+        <div class="project-section-label">Problem Statement</div>
+        <div class="project-section-body">A local business had raw phone-shot footage but no polished short-form content for social media, limiting their online visibility.</div>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Technologies / Tools</div>
+        <div class="tool-tags">
+          <span class="tool-tag">CapCut</span>
+          <span class="tool-tag">Adobe Premiere Pro</span>
+          <span class="tool-tag">After Effects</span>
+        </div>
+      </div>
+      <div class="project-section full">
+        <div class="project-section-label">Key Contributions</div>
+        <ul class="contrib-list">
+          <li>Cut raw footage into three 30–60 second promotional reels.</li>
+          <li>Added motion-graphic captions and branded intro/outro cards.</li>
+          <li>Delivered platform-ready exports for Instagram Reels and TikTok.</li>
+        </ul>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Outcome &amp; Impact</div>
+        <div class="project-section-body">The reels outperformed the client's previous posts in views and engagement, leading to two repeat freelance bookings.</div>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Evidence</div>
+        <div class="evidence-row">
+          <a class="evidence-link mono" href="#">Sample reel</a>
+          <a class="evidence-link mono" href="#">Client testimonial</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+</main>
+
+</body>
+</html>

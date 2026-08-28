@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUE. SYSTEMS — Gap Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060b09;
+    --panel: #0c1512;
+    --panel-2: #0a110e;
+    --border: #1a2b23;
+    --text: #b9d0c4;
+    --text-dim: #667a70;
+    --heading: #f0f7f2;
+    --accent: #3ef598;
+    --accent2: #2fb6e0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; overflow-x: hidden; }
+  body::before {
+    content: ""; position: fixed; inset: 0;
+    background: radial-gradient(ellipse 900px 600px at 15% 5%, rgba(62,245,152,0.10), transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  a { color: inherit; text-decoration: none; }
+  .display { font-family: 'Anton', sans-serif; font-weight: 400; letter-spacing: 0.5px; }
+
+  /* NAV */
+  nav { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 16px 48px; background: rgba(6,11,9,0.9); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 12px; }
+  .nav-logo { font-family: 'Anton', sans-serif; font-size: 14px; color: var(--heading); display: flex; align-items: center; gap: 8px; }
+  .nav-logo .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .pills { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pill { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); color: var(--text-dim); transition: all .2s; }
+  .pill:hover { border-color: var(--accent2); color: var(--text); }
+  .pill.active { background: var(--accent2); border-color: var(--accent2); color: #06120a; }
+  .back-link { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); border: 1px solid var(--border); padding: 7px 13px; border-radius: 4px; }
+  .back-link:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* HEADER */
+  .page-header { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 70px 48px 40px; border-bottom: 1px solid var(--border); }
+  .page-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 2px; color: var(--accent2); text-transform: uppercase; margin-bottom: 10px; }
+  .page-title { font-family: 'Anton', sans-serif; font-size: clamp(32px, 5vw, 52px); color: var(--heading); margin-bottom: 16px; }
+  .page-intro { font-size: 14.5px; line-height: 1.7; color: var(--text); max-width: 720px; }
+
+  /* GOAL STRIP */
+  .goal-strip { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 32px 48px 0; display: flex; gap: 40px; flex-wrap: wrap; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; }
+  .goal-strip div span { display: block; color: var(--text-dim); font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .goal-strip div strong { color: var(--heading); font-size: 14px; font-weight: 600; }
+
+  /* ROADMAP */
+  .roadmap-main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 50px 48px 100px; }
+  .roadmap { position: relative; display: flex; flex-direction: column; gap: 0; }
+  .roadmap::before { content: ""; position: absolute; left: 23px; top: 10px; bottom: 10px; width: 1px; background: var(--border); }
+  .gap-card { position: relative; display: grid; grid-template-columns: 48px 1fr; gap: 22px; padding: 26px 0; }
+  .gap-num { width: 48px; height: 48px; border-radius: 50%; background: var(--panel); border: 1px solid var(--accent2); display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-size: 16px; color: var(--accent2); z-index: 1; }
+  .gap-body { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 24px 28px; }
+  .gap-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .gap-skill { font-family: 'Anton', sans-serif; font-size: 18px; color: var(--heading); }
+  .gap-category { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px; }
+  .gap-levels { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; }
+  .level-tag { padding: 4px 10px; border-radius: 5px; }
+  .level-tag.current { background: var(--panel-2); color: var(--text-dim); border: 1px solid var(--border); }
+  .level-tag.target { background: rgba(62,245,152,0.12); color: var(--accent); border: 1px solid var(--accent-dim, var(--accent)); }
+  .gap-arrow { color: var(--text-dim); }
+  .gap-plan-label { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent2); margin-bottom: 6px; }
+  .gap-plan-body { font-size: 13.5px; line-height: 1.65; color: var(--text); }
+  @media (max-width: 640px) { .gap-card { grid-template-columns: 1fr; } .gap-num { margin-bottom: 4px; } .roadmap::before { display: none; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><span class="dot"></span><span>HUE. SYSTEMS</span></div>
+  <div class="pills">
+    <a href="software-engineer.html" class="pill">HOME</a>
+    <a href="skills.html" class="pill">SKILLS</a>
+    <a href="projects.html" class="pill">PROJECTS</a>
+    <a href="gap-analysis.html" class="pill active">GAP ANALYSIS</a>
+    <a href="career-goals.html" class="pill">CAREER GOALS</a>
+  </div>
+  <a class="back-link mono" href="index.html">&larr; All portfolios</a>
+</nav>
+
+<header class="page-header">
+  <div class="page-eyebrow">Skills Roadmap</div>
+  <h1 class="page-title display">Gap Analysis</h1>
+  <p class="page-intro">A comparison between where my skills stand today and what my target software engineering role expects, with a concrete plan to close each gap.</p>
+</header>
+
+<div class="goal-strip">
+  <div><span>Current Standing</span><strong>Junior / Entry-Level Developer</strong></div>
+  <div><span>Career Goal</span><strong>Backend / Full-Stack Software Engineer</strong></div>
+  <div><span>Target Timeline</span><strong>12–18 months</strong></div>
+</div>
+
+<main class="roadmap-main">
+  <div class="roadmap">
+
+    <div class="gap-card">
+      <div class="gap-num mono">1</div>
+      <div class="gap-body">
+        <div class="gap-head">
+          <div class="gap-skill">Cloud Computing</div>
+          <div class="gap-category mono">Technical</div>
+        </div>
+        <div class="gap-levels">
+          <span class="level-tag current">Current: Novice</span>
+          <span class="gap-arrow">→</span>
+          <span class="level-tag target">Target: Proficient</span>
+        </div>
+        <div class="gap-plan-label">Plan</div>
+        <div class="gap-plan-body">Enroll in the AWS Certified Cloud Practitioner course and exam. Deploy at least two personal projects on AWS/Azure to get hands-on practice with hosting, storage, and CI/CD.</div>
+      </div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-num mono">2</div>
+      <div class="gap-body">
+        <div class="gap-head">
+          <div class="gap-skill">Cybersecurity Fundamentals</div>
+          <div class="gap-category mono">Technical</div>
+        </div>
+        <div class="gap-levels">
+          <span class="level-tag current">Current: Novice</span>
+          <span class="gap-arrow">→</span>
+          <span class="level-tag target">Target: Intermediate</span>
+        </div>
+        <div class="gap-plan-label">Plan</div>
+        <div class="gap-plan-body">Take an online course covering penetration testing basics and secure coding practices. Practice with lab simulations (e.g., TryHackMe) to build applied experience.</div>
+      </div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-num mono">3</div>
+      <div class="gap-body">
+        <div class="gap-head">
+          <div class="gap-skill">Advanced Machine Learning</div>
+          <div class="gap-category mono">Technical</div>
+        </div>
+        <div class="gap-levels">
+          <span class="level-tag current">Current: Beginner</span>
+          <span class="gap-arrow">→</span>
+          <span class="level-tag target">Target: Intermediate</span>
+        </div>
+        <div class="gap-plan-label">Plan</div>
+        <div class="gap-plan-body">Study TensorFlow and scikit-learn through structured coursework, then apply what I learn in a data-analytics side project with a real dataset.</div>
+      </div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-num mono">4</div>
+      <div class="gap-body">
+        <div class="gap-head">
+          <div class="gap-skill">Professional Communication</div>
+          <div class="gap-category mono">Soft Skill</div>
+        </div>
+        <div class="gap-levels">
+          <span class="level-tag current">Current: Intermediate</span>
+          <span class="gap-arrow">→</span>
+          <span class="level-tag target">Target: Proficient</span>
+        </div>
+        <div class="gap-plan-label">Plan</div>
+        <div class="gap-plan-body">Attend workshops on technical writing and presentation skills, and practice by documenting each project thoroughly (READMEs, design notes, demo write-ups).</div>
+      </div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-num mono">5</div>
+      <div class="gap-body">
+        <div class="gap-head">
+          <div class="gap-skill">Collaboration Platforms</div>
+          <div class="gap-category mono">Workflow</div>
+        </div>
+        <div class="gap-levels">
+          <span class="level-tag current">Current: Beginner</span>
+          <span class="gap-arrow">→</span>
+          <span class="level-tag target">Target: Proficient</span>
+        </div>
+        <div class="gap-plan-label">Plan</div>
+        <div class="gap-plan-body">Get deeper, day-to-day experience with Jira and Trello by managing sprint boards and task tracking in future group and team projects.</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+</body>
+</html>

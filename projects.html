@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUE. SYSTEMS — Projects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060b09;
+    --panel: #0c1512;
+    --panel-2: #0a110e;
+    --border: #1a2b23;
+    --text: #b9d0c4;
+    --text-dim: #667a70;
+    --heading: #f0f7f2;
+    --accent: #3ef598;
+    --accent2: #2fb6e0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; overflow-x: hidden; }
+  body::before {
+    content: ""; position: fixed; inset: 0;
+    background: radial-gradient(ellipse 900px 600px at 15% 5%, rgba(62,245,152,0.10), transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  a { color: inherit; text-decoration: none; }
+  .display { font-family: 'Anton', sans-serif; font-weight: 400; letter-spacing: 0.5px; }
+
+  /* NAV */
+  nav { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 16px 48px; background: rgba(6,11,9,0.9); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 12px; }
+  .nav-logo { font-family: 'Anton', sans-serif; font-size: 14px; color: var(--heading); display: flex; align-items: center; gap: 8px; }
+  .nav-logo .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .pills { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pill { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); color: var(--text-dim); transition: all .2s; }
+  .pill:hover { border-color: var(--accent2); color: var(--text); }
+  .pill.active { background: var(--accent2); border-color: var(--accent2); color: #06120a; }
+  .back-link { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); border: 1px solid var(--border); padding: 7px 13px; border-radius: 4px; }
+  .back-link:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* HEADER */
+  .page-header { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 70px 48px 40px; border-bottom: 1px solid var(--border); }
+  .page-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 2px; color: var(--accent2); text-transform: uppercase; margin-bottom: 10px; }
+  .page-title { font-family: 'Anton', sans-serif; font-size: clamp(32px, 5vw, 52px); color: var(--heading); margin-bottom: 16px; }
+  .page-intro { font-size: 14.5px; line-height: 1.7; color: var(--text); max-width: 720px; }
+
+  /* PROJECTS */
+  .projects-main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 50px 48px 100px; display: flex; flex-direction: column; gap: 28px; }
+  .project-card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 32px; }
+  .project-card-head { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 22px; padding-bottom: 20px; border-bottom: 1px solid var(--panel-2); flex-wrap: wrap; justify-content: space-between; }
+  .project-index { font-family: 'Anton', sans-serif; font-size: 28px; color: var(--accent2); opacity: 0.5; line-height: 1; }
+  .project-title-wrap { flex: 1; min-width: 220px; }
+  .project-title { font-family: 'Anton', sans-serif; font-size: 20px; color: var(--heading); margin-bottom: 6px; }
+  .project-role { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+  .project-type-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); color: var(--text-dim); height: fit-content; }
+
+  .project-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .project-section-label { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent2); margin-bottom: 8px; }
+  .project-section-body { font-size: 13.5px; line-height: 1.65; color: var(--text); }
+  .project-section { margin-bottom: 4px; }
+  .project-section.full { grid-column: 1 / -1; }
+
+  .tool-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tool-tag { font-family: 'IBM Plex Mono', monospace; font-size: 11px; background: var(--panel-2); border: 1px solid var(--border); color: var(--heading); padding: 5px 10px; border-radius: 5px; }
+
+  .contrib-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .contrib-list li { position: relative; padding-left: 16px; font-size: 13.5px; line-height: 1.6; color: var(--text); }
+  .contrib-list li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); }
+
+  .evidence-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+  .evidence-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--accent2); border: 1px solid var(--border); padding: 7px 12px; border-radius: 5px; transition: border-color .15s, color .15s; }
+  .evidence-link:hover { border-color: var(--accent2); }
+  .evidence-link::before { content: "→"; }
+
+  @media (max-width: 720px) { .project-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><span class="dot"></span><span>HUE. SYSTEMS</span></div>
+  <div class="pills">
+    <a href="software-engineer.html" class="pill">HOME</a>
+    <a href="skills.html" class="pill">SKILLS</a>
+    <a href="projects.html" class="pill active">PROJECTS</a>
+    <a href="gap-analysis.html" class="pill">GAP ANALYSIS</a>
+    <a href="career-goals.html" class="pill">CAREER GOALS</a>
+  </div>
+  <a class="back-link mono" href="index.html">&larr; All portfolios</a>
+</nav>
+
+<header class="page-header">
+  <div class="page-eyebrow">Project Portfolio</div>
+  <h1 class="page-title display">Projects</h1>
+  <p class="page-intro">A closer look at academic, internship, and personal work — what problem each project solved, how I built it, and what came of it. Evidence links point to source code, live demos, or sample output.</p>
+</header>
+
+<main class="projects-main">
+
+  <article class="project-card">
+    <div class="project-card-head">
+      <div style="display:flex; gap:16px; align-items:flex-start;">
+        <div class="project-index mono">01</div>
+        <div class="project-title-wrap">
+          <div class="project-title">Capstone Project</div>
+          <div class="project-role mono">Lead Developer</div>
+        </div>
+      </div>
+      <div class="project-type-tag mono">Academic · Programming</div>
+    </div>
+    <div class="project-grid">
+      <div class="project-section">
+        <div class="project-section-label">Problem Statement</div>
+        <div class="project-section-body">Faculty were manually computing and consolidating student grades across multiple sections, which was slow and prone to transcription errors during grading periods.</div>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Technologies / Tools</div>
+        <div class="tool-tags">
+          <span class="tool-tag">Python</span>
+          <span class="tool-tag">Django</span>
+          <span class="tool-tag">MySQL</span>
+          <span class="tool-tag">Git</span>
+        </div>
+      </div>
+      <div class="project-section full">
+        <div class="project-section-label">Key Contributions</div>
+        <ul class="contrib-list">
+          <li>Designed the relational database schema for students, sections, and grade components.</li>
+          <li>Built the backend logic for weighted grade computation and automatic rounding rules.</li>
+          <li>Implemented role-based access so instructors could only edit their own sections.</li>
+        </ul>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Outcome &amp; Impact</div>
+        <div class="project-section-body">Deployed for faculty use during the term; cut manual grade-reporting time significantly and eliminated recurring calculation errors flagged in prior terms.</div>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Evidence</div>
+        <div class="evidence-row">
+          <a class="evidence-link mono" href="#">GitHub repository</a>
+          <a class="evidence-link mono" href="#">Demo walkthrough</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="project-card">
+    <div class="project-card-head">
+      <div style="display:flex; gap:16px; align-items:flex-start;">
+        <div class="project-index mono">02</div>
+        <div class="project-title-wrap">
+          <div class="project-title">Event Registration System</div>
+          <div class="project-role mono">Backend Developer — Internship</div>
+        </div>
+      </div>
+      <div class="project-type-tag mono">Internship · Programming</div>
+    </div>
+    <div class="project-grid">
+      <div class="project-section">
+        <div class="project-section-label">Problem Statement</div>
+        <div class="project-section-body">Attendee sign-ups for company events were tracked in scattered spreadsheets, making it hard to see capacity, send confirmations, or pull attendance reports.</div>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Technologies / Tools</div>
+        <div class="tool-tags">
+          <span class="tool-tag">React</span>
+          <span class="tool-tag">Node.js</span>
+          <span class="tool-tag">PostgreSQL</span>
+          <span class="tool-tag">REST API</span>
+        </div>
+      </div>
+      <div class="project-section full">
+        <div class="project-section-label">Key Contributions</div>
+        <ul class="contrib-list">
+          <li>Built REST endpoints for event creation, registration, and capacity limits.</li>
+          <li>Developed the registrant-facing form and a simple admin dashboard.</li>
+          <li>Wrote automated tests covering the registration and waitlist logic.</li>
+        </ul>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Outcome &amp; Impact</div>
+        <div class="project-section-body">Adopted by the events team for two consecutive company events; replaced manual spreadsheet tracking and gave organizers a real-time headcount.</div>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Evidence</div>
+        <div class="evidence-row">
+          <a class="evidence-link mono" href="#">GitHub repository</a>
+          <a class="evidence-link mono" href="#">Screenshots</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="project-card">
+    <div class="project-card-head">
+      <div style="display:flex; gap:16px; align-items:flex-start;">
+        <div class="project-index mono">03</div>
+        <div class="project-title-wrap">
+          <div class="project-title">Student Organization Event Coverage</div>
+          <div class="project-role mono">Photographer</div>
+        </div>
+      </div>
+      <div class="project-type-tag mono">Personal · Non-Programming</div>
+    </div>
+    <div class="project-grid">
+      <div class="project-section">
+        <div class="project-section-label">Problem Statement</div>
+        <div class="project-section-body">Our student organization's events had little professional documentation, which made it hard to promote future events or showcase activities to sponsors.</div>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Technologies / Tools</div>
+        <div class="tool-tags">
+          <span class="tool-tag">DSLR Camera</span>
+          <span class="tool-tag">Adobe Lightroom</span>
+          <span class="tool-tag">Canva</span>
+        </div>
+      </div>
+      <div class="project-section full">
+        <div class="project-section-label">Key Contributions</div>
+        <ul class="contrib-list">
+          <li>Captured candid and posed photography across five organization events.</li>
+          <li>Edited and color-corrected selects for consistent, publishable quality.</li>
+          <li>Curated and captioned photo sets for social media release.</li>
+        </ul>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Outcome &amp; Impact</div>
+        <div class="project-section-body">Noticeably improved the organization's social media presence and engagement, and the photo sets were later reused in a sponsorship deck.</div>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Evidence</div>
+        <div class="evidence-row">
+          <a class="evidence-link mono" href="#">Photo gallery</a>
+          <a class="evidence-link mono" href="#">Instagram post</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+</main>
+
+</body>
+</html>
